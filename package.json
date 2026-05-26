@@ -1,0 +1,22 @@
+{
+  "name": "omo-kit",
+  "version": "0.1.0",
+  "description": "CLI toolkit for oh-my-openagent — config generator, validator, and theme manager",
+  "repository": "github.com/srmdn/omo-kit",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "omo-kit": "src/index.ts"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "typecheck": "bun --check src/"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

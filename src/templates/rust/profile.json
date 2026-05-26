@@ -1,0 +1,9 @@
+{
+  "name": "Rust",
+  "description": "cargo, clippy, rust-analyzer",
+  "disabled_skills": ["frontend-ui-ux", "frontend-design", "design-taste-frontend"],
+  "disabled_mcps": ["browser", "playwright"],
+  "agent_overrides": {
+    "oracle": { "thinking": { "budgetTokens": 16000 } }
+  }
+}
