@@ -33,10 +33,10 @@ async function discoverStacks(): Promise<Map<string, StackProfile>> {
   const entries = await readdir(TEMPLATES_DIR, { withFileTypes: true });
   for (const e of entries) {
     if (!e.isDirectory()) continue;
-    const claudePath = join(TEMPLATES_DIR, e.name, "CLAUDE.md");
+    const agentsPath = join(TEMPLATES_DIR, e.name, "AGENTS.md");
     const profilePath = join(TEMPLATES_DIR, e.name, "profile.json");
     try {
-      await Bun.file(claudePath).text();
+      await Bun.file(agentsPath).text();
       const profile: StackProfile = JSON.parse(
         await Bun.file(profilePath).text(),
       );
@@ -598,10 +598,7 @@ export async function initCommand(): Promise<void> {
 
     const templateStack = stacks.has(stack) ? stack : "generic";
 
-    const [claudeTemplate, agentsTemplate] = await Promise.all([
-      readTemplate(templateStack, "CLAUDE.md"),
-      readTemplate(templateStack, "AGENTS.md"),
-    ]);
+    const agentsTemplate = await readTemplate(templateStack, "AGENTS.md");
 
     const allErrors: ValidationError[] = [
       ...validateOhMyOpenagent(omoConfig),
@@ -624,7 +621,6 @@ export async function initCommand(): Promise<void> {
       join(cwd, "oh-my-openagent.json"),
       join(cwd, "opencode.json"),
       join(cwd, "tui.json"),
-      join(cwd, "CLAUDE.md"),
       join(cwd, "AGENTS.md"),
     ];
 
@@ -651,7 +647,6 @@ export async function initCommand(): Promise<void> {
     files.push(await writeJsonFile(cwd, "oh-my-openagent.json", omoConfig));
     files.push(await writeJsonFile(cwd, "opencode.json", openCodeConfig));
     files.push(await writeJsonFile(cwd, "tui.json", tuiConfig));
-    files.push(await writeMarkdownFile(cwd, "CLAUDE.md", claudeTemplate));
     files.push(await writeMarkdownFile(cwd, "AGENTS.md", agentsTemplate));
 
     console.log(`\n  ✓ Generated ${files.length} files:\n`);
