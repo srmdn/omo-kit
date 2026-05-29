@@ -508,14 +508,39 @@ footer {
 }
 
 /* ─── RESPONSIVE ─── */
+/* Tablet */
+@media (max-width: 1024px) {
+  .container { padding: 0 var(--space-xl); }
+  .hero::before { width: 400px; height: 400px; }
+  .commands-grid { gap: var(--space-md); }
+  .features-grid { gap: var(--space-lg); }
+}
+
+/* Mobile */
 @media (max-width: 640px) {
   .container { padding: 0 var(--space-md); }
-  .hero { min-height: 90vh; padding: var(--space-xl) 0; }
-  .hero-title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+  section { padding: var(--space-xl) 0; }
+  .hero { min-height: auto; padding: var(--space-2xl) 0 var(--space-xl); }
+  .hero::before { width: 280px; height: 280px; opacity: 0.5; }
+  .hero-title { font-size: clamp(2rem, 10vw, 3rem); }
+  .hero-subtitle { font-size: 1rem; max-width: 100%; }
+  .hero-tagline { max-width: 100%; font-size: 0.85rem; }
   .commands-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }
+  .terminal-body { font-size: 0.8rem; padding: var(--space-md); word-break: break-word; overflow-wrap: break-word; }
+  .command-card .cmd-snippet { font-size: 0.75rem; white-space: pre-wrap; word-break: break-all; }
+  .help-block .terminal-body { font-size: 0.72rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
   .footer-inner { flex-direction: column; text-align: center; }
   .footer-links { justify-content: center; }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .container { padding: 0 var(--space-sm); }
+  .hero-title { font-size: 1.8rem; }
+  .section-heading { font-size: 1.3rem; }
+  .tag-list { gap: var(--space-xs); }
+  .tag { font-size: 0.72rem; padding: var(--space-xs) var(--space-sm); }
 }
 
 /* ─── SCROLLBAR ─── */
