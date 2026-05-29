@@ -1,4 +1,7 @@
 {
   "name": "Astro",
-  "description": "content sites, SSR"
+  "description": "Content-first, SSR/static, Bun",
+  "disabled_skills": [],
+  "disabled_mcps": [],
+  "agent_overrides": {}
 }

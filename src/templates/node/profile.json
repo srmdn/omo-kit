@@ -1,4 +1,7 @@
 {
-  "name": "Node",
-  "description": "Bun, Vite, TypeScript"
+  "name": "Node.js",
+  "description": "Bun, Vite, TypeScript strict",
+  "disabled_skills": [],
+  "disabled_mcps": [],
+  "agent_overrides": {}
 }

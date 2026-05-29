@@ -1,4 +1,7 @@
 {
   "name": "Svelte",
-  "description": "SvelteKit, Tailwind, TypeScript"
+  "description": "SvelteKit, Tailwind, runes mode",
+  "disabled_skills": [],
+  "disabled_mcps": [],
+  "agent_overrides": {}
 }
