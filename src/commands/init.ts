@@ -108,15 +108,15 @@ const MODEL_CATALOG: Record<Provider, ModelPool> = {
     premium: [
       "opencode-go/deepseek-v4-pro",
       "opencode-go/glm-5.1",
-      "opencode-go/kimi-k2.6",
+      "opencode-go/kimi2.6",
     ],
     medium: [
       "opencode-go/glm-5.1",
       "opencode-go/minimax-m2.7",
-      "opencode-go/kimi-k2.5",
-      "opencode-go/qwen3.5-plus",
+      "opencode-go/kimi2.5",
+      "opencode-go/qwen3.6-plus",
     ],
-    free: ["opencode-go/minimax-m2.5-free"],
+    free: ["opencode-go/minimax-m2.5-free", "opencode-go/big-pickle"],
   },
   anthropic: {
     premium: ["anthropic/claude-opus-4-8"],
@@ -281,8 +281,15 @@ function generateOhMyOpenagent(
     const model = isOrch ? orchestratorModel : pickModel(pool, tier);
     const fallback_models = pickFallbacks(pool, tier, budget, model);
     const agent: AgentConfig = { model, textVerbosity: "low", fallback_models };
-    if (["sisyphus", "oracle", "prometheus", "metis", "atlas"].includes(name)) {
-      agent.thinking = { type: "enabled", budgetTokens: 8000 };
+    // Thinking policy: conservative for premium (avoids DeepSeek thinking bug),
+    // enabled for medium with budget proportional to task complexity,
+    // disabled for free-tier and lightweight search agents.
+    if (name === "momus") {
+      agent.thinking = { type: "enabled", budgetTokens: 16000 };
+    } else if (name === "sisyphus-junior") {
+      agent.thinking = { type: "enabled", budgetTokens: 4000 };
+    } else if (["explore", "librarian"].includes(name) || tier === "free") {
+      agent.thinking = { type: "disabled", budgetTokens: 0 };
     }
     agents[name] = agent;
   }
@@ -301,6 +308,14 @@ function generateOhMyOpenagent(
     const model = pickModel(pool, tier);
     const fallback_models = pickFallbacks(pool, tier, budget, model);
     categories[name] = { model, textVerbosity: "low", fallback_models };
+    // Category thinking: enabled for visual/creative, disabled for free tier.
+    if (name === "visual-engineering") {
+      categories[name].thinking = { type: "enabled", budgetTokens: 8000 };
+    } else if (name === "artistry") {
+      categories[name].thinking = { type: "enabled", budgetTokens: 16000 };
+    } else if (tier === "free") {
+      categories[name].thinking = { type: "disabled", budgetTokens: 0 };
+    }
   }
 
   if (profile?.category_overrides) {
