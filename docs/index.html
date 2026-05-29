@@ -303,82 +303,94 @@ section {
   font-style: italic;
 }
 
-/* ─── COMMAND CARDS ─── */
+/* ─── COMMANDS — TIMELINE ─── */
 .commands-section {
   border-top: 1px solid var(--border-subtle);
 }
 
-.commands-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-lg);
-}
-
-.command-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  transition: border-color var(--transition-med), box-shadow var(--transition-med);
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
   position: relative;
-  overflow: hidden;
 }
 
-.command-card::before {
+.timeline::before {
   content: '';
   position: absolute;
+  left: 24px;
   top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent-green), transparent);
-  opacity: 0;
-  transition: opacity var(--transition-med);
+  bottom: 0;
+  width: 1px;
+  background: var(--border-subtle);
 }
 
-.command-card:hover {
-  border-color: var(--border-accent);
-  box-shadow: 0 0 30px var(--glow-green);
+.timeline-step {
+  display: flex;
+  gap: var(--space-xl);
+  position: relative;
 }
 
-.command-card:hover::before {
-  opacity: 1;
-}
-
-.command-card .cmd-name {
+.timeline-marker {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--accent-green);
+  z-index: 1;
+  box-shadow: 0 0 20px var(--glow-green);
+}
+
+.timeline-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline-body h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: var(--space-xs);
 }
 
-.command-card .cmd-usage {
+.timeline-body .step-usage {
+  font-family: var(--mono);
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
-.command-card .cmd-desc {
+.timeline-body .step-desc {
   color: var(--text-secondary);
-  margin-bottom: var(--space-lg);
   line-height: var(--leading-normal);
+  margin-bottom: var(--space-lg);
+  max-width: 44rem;
 }
 
-/* Terminal blocks inside cards fill card width */
-.command-card .terminal-block {
+.timeline .terminal-block {
   max-width: none;
 }
 
-.command-card .terminal-body {
+.timeline .terminal-body {
   font-size: 0.8rem;
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  line-height: 1.8;
   overflow-x: auto;
   white-space: nowrap;
 }
 
-.command-card .terminal-body .flag {
-  color: var(--accent-cyan);
-}
+.timeline .terminal-body .out-success { color: var(--accent-green); }
+.timeline .terminal-body .out-dim { color: var(--text-muted); }
+.timeline .terminal-body .out-prompt { color: var(--accent-cyan); }
+.timeline .terminal-body .out-highlight { color: var(--accent-amber); }
 
 /* ─── FEATURES ─── */
 .features-section {
@@ -513,7 +525,6 @@ footer {
 @media (max-width: 1024px) {
   .container { padding: 0 var(--space-xl); }
   .hero::before { width: 400px; height: 400px; }
-  .commands-grid { gap: var(--space-md); }
   .features-grid { gap: var(--space-lg); }
 }
 
@@ -530,7 +541,10 @@ footer {
   .commands-grid { grid-template-columns: 1fr; max-width: 100%; }
   .features-grid { grid-template-columns: 1fr; }
   .terminal-body { font-size: 0.8rem; padding: var(--space-md); word-break: break-word; overflow-wrap: break-word; }
-  .command-card .terminal-body { font-size: 0.75rem; white-space: normal; word-break: break-word; }
+  .timeline::before { left: 20px; }
+  .timeline-step { gap: var(--space-md); }
+  .timeline-marker { width: 40px; height: 40px; font-size: 0.95rem; }
+  .timeline-body .terminal-body { font-size: 0.7rem; white-space: normal; word-break: break-word; }
   .help-block .terminal-body { font-size: 0.72rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
   .footer-inner { flex-direction: column; text-align: center; }
   .footer-links { justify-content: center; }
@@ -609,65 +623,105 @@ footer {
 <section class="commands-section">
   <div class="container">
     <div class="section-label reveal">commands</div>
-    <h2 class="section-heading reveal">Three commands. Zero config files to write by hand.</h2>
-    <div class="commands-grid">
+    <h2 class="section-heading reveal">Three commands. One workflow.</h2>
+    <div class="timeline">
 
-      <div class="command-card reveal">
-        <div class="cmd-name">init</div>
-        <div class="cmd-usage">bunx omo-kit init</div>
-        <div class="cmd-desc">
-          Interactive config generator. Pick your stack, choose a provider, answer a few questions &mdash; get a valid config file written to disk.
-        </div>
-        <div class="terminal-block">
-          <div class="terminal-header">
-            <span class="terminal-dot red"></span>
-            <span class="terminal-dot yellow"></span>
-            <span class="terminal-dot green"></span>
-            <span class="terminal-title">$ omo-kit init --help</span>
-          </div>
-          <div class="terminal-body">
-            <span class="flag">--stack</span> astro|generic|go|node|python|rust|svelte<br>
-            <span class="flag">--provider</span> opencode-go|anthropic|openai|copilot|gemini|grok|deepseek
+      <div class="timeline-step reveal">
+        <div class="timeline-marker">1</div>
+        <div class="timeline-body">
+          <h3>init</h3>
+          <div class="step-usage">$ bunx omo-kit init</div>
+          <p class="step-desc">
+            Generate config files interactively. Pick your tech stack, choose model providers, set your budget — get a valid <span class="out-highlight">oh-my-openagent.json</span>, <span class="out-highlight">opencode.json</span>, <span class="out-highlight">AGENTS.md</span>, and <span class="out-highlight">tui.json</span> written to disk.
+          </p>
+          <div class="terminal-block">
+            <div class="terminal-header">
+              <span class="terminal-dot red"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+              <span class="terminal-title">~/my-project</span>
+            </div>
+            <div class="terminal-body">
+              <span class="prompt">$ </span><span class="command">omo-kit init</span><br>
+              <br>
+              <span class="out-prompt">? </span>What is your project stack?&nbsp;&nbsp;<span class="out-dim">(Stacks available: 7)</span><br>
+              <span class="out-success">&gt; go</span><br>
+              <br>
+              <span class="out-prompt">? </span>Which model providers do you have access to?&nbsp;&nbsp;<span class="out-dim">(Providers available: 7)</span><br>
+              <span class="out-success">&gt; anthropic, openai</span><br>
+              <br>
+              <span class="out-prompt">? </span>Budget tier?&nbsp;&nbsp;<span class="out-dim">(frugal)</span><br>
+              <span class="out-success">&gt; frugal</span><br>
+              <br>
+              <span class="out-success">✓</span> Generated 4 files in <span class="out-highlight">~/my-project</span>:<br>
+              &nbsp;&nbsp;<span class="out-highlight">oh-my-openagent.json</span><br>
+              &nbsp;&nbsp;<span class="out-highlight">opencode.json</span><br>
+              &nbsp;&nbsp;<span class="out-highlight">AGENTS.md</span><br>
+              &nbsp;&nbsp;<span class="out-highlight">tui.json</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="command-card reveal">
-        <div class="cmd-name">doctor</div>
-        <div class="cmd-usage">bunx omo-kit doctor</div>
-        <div class="cmd-desc">
-          Validate your existing config files. Checks structure, required fields, provider-specific keys, and stack compatibility. Exits clean or tells you exactly what&rsquo;s wrong.
-        </div>
-        <div class="terminal-block">
-          <div class="terminal-header">
-            <span class="terminal-dot red"></span>
-            <span class="terminal-dot yellow"></span>
-            <span class="terminal-dot green"></span>
-            <span class="terminal-title">$ omo-kit doctor --help</span>
-          </div>
-          <div class="terminal-body">
-            <span class="flag">--fix</span> auto-repair where possible<br>
-            <span class="flag">--verbose</span> show full validation report
+      <div class="timeline-step reveal">
+        <div class="timeline-marker">2</div>
+        <div class="timeline-body">
+          <h3>doctor</h3>
+          <div class="step-usage">$ bunx omo-kit doctor</div>
+          <p class="step-desc">
+            Validate your config files. Checks structure, required fields, provider-specific keys, and stack compatibility. Clean exit or exact diagnostics with file:line pointers.
+          </p>
+          <div class="terminal-block">
+            <div class="terminal-header">
+              <span class="terminal-dot red"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+              <span class="terminal-title">~/my-project</span>
+            </div>
+            <div class="terminal-body">
+              <span class="prompt">$ </span><span class="command">omo-kit doctor</span><br>
+              <br>
+              <span class="out-dim">── CWD — ~/my-project ──</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> oh-my-openagent.json&nbsp;&nbsp;<span class="out-dim">valid</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> opencode.json&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-dim">valid</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> tui.json&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-dim">valid</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> AGENTS.md&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-dim">valid</span><br>
+              <br>
+              <span class="out-dim">── ~/.config/opencode ──</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> oh-my-openagent.json&nbsp;&nbsp;<span class="out-dim">valid</span><br>
+              <br>
+              <span class="out-success">All checks passed</span><span class="out-dim"> (8/8 files)</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="command-card reveal">
-        <div class="cmd-name">theme</div>
-        <div class="cmd-usage">bunx omo-kit theme</div>
-        <div class="cmd-desc">
-          Manage OpenCode themes. Validate theme files, generate new ones from templates, or list available themes. Keeps your color configs consistent and valid.
-        </div>
-        <div class="terminal-block">
-          <div class="terminal-header">
-            <span class="terminal-dot red"></span>
-            <span class="terminal-dot yellow"></span>
-            <span class="terminal-dot green"></span>
-            <span class="terminal-title">$ omo-kit theme --help</span>
-          </div>
-          <div class="terminal-body">
-            <span class="flag">--validate</span> check theme file integrity<br>
-            <span class="flag">--generate</span> create theme from template
+      <div class="timeline-step reveal">
+        <div class="timeline-marker">3</div>
+        <div class="timeline-body">
+          <h3>theme</h3>
+          <div class="step-usage">$ bunx omo-kit theme</div>
+          <p class="step-desc">
+            Manage OpenCode themes. Validate existing theme files, generate new ones from templates, or list available themes. Keeps your color configs consistent.
+          </p>
+          <div class="terminal-block">
+            <div class="terminal-header">
+              <span class="terminal-dot red"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+              <span class="terminal-title">~/my-project</span>
+            </div>
+            <div class="terminal-body">
+              <span class="prompt">$ </span><span class="command">omo-kit theme validate ~/.config/opencode/theme.json</span><br>
+              <br>
+              <span class="out-dim">── theme.json ──</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> <span class="out-dim">colors.background</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-success">#0a0a0c</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> <span class="out-dim">colors.foreground</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-success">#e4e4ec</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> <span class="out-dim">colors.accent</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-success">#00e676</span><br>
+              &nbsp;&nbsp;<span class="out-success">✓</span> <span class="out-dim">colors.error</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="out-success">#ff5370</span><br>
+              <br>
+              <span class="out-success">Theme valid</span><span class="out-dim"> — 12 color tokens, 0 issues</span>
+            </div>
           </div>
         </div>
       </div>
