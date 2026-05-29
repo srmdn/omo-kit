@@ -30,7 +30,7 @@ Usage:
   bunx omo-kit doctor     Validate existing config files
   bunx omo-kit theme      Manage themes (validate, generate)
 
-Docs: https://srmdn.github.io/rig/cli/
+Docs: https://srmdn.github.io/omo-kit/guide/
 `);
       break;
     default:
