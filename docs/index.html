@@ -462,16 +462,72 @@ section {
   border-top: 1px solid var(--border-subtle);
 }
 
+.help-section .section-heading {
+  text-align: center;
+}
+
+.help-section .section-label {
+  justify-content: center;
+}
+
 .help-block {
   background: var(--bg-deep);
   border: 1px solid var(--border-accent);
   border-radius: var(--radius-md);
   overflow: hidden;
   max-width: 48rem;
+  margin: 0 auto;
 }
 
-.help-block .terminal-header {
-  background: var(--bg-surface);
+.help-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: var(--space-lg) 0 var(--space-md);
+}
+
+.help-per-cmd {
+  display: flex;
+  gap: var(--space-md);
+  max-width: 48rem;
+  margin: 0 auto;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.help-per-cmd .mini-terminal {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex: 1;
+  min-width: 220px;
+  max-width: 320px;
+}
+
+.mini-terminal .terminal-header {
+  padding: var(--space-xs) var(--space-md);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.mini-terminal .terminal-header .terminal-title {
+  font-size: 0.7rem;
+}
+
+.mini-terminal .terminal-body {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  font-family: var(--mono);
+  color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.mini-terminal .terminal-body strong {
+  color: var(--accent-green);
+  font-weight: 600;
 }
 
 .help-block .terminal-body {
@@ -538,7 +594,6 @@ footer {
   .hero-title { font-size: clamp(2rem, 10vw, 3rem); }
   .hero-subtitle { font-size: 1rem; max-width: 100%; }
   .hero-tagline { max-width: 100%; font-size: 0.85rem; border-left: none; border-top: 2px solid var(--accent-green); padding-left: 0; padding-top: var(--space-sm); margin: 0 auto; }
-  .commands-grid { grid-template-columns: 1fr; max-width: 100%; }
   .features-grid { grid-template-columns: 1fr; }
   .terminal-body { font-size: 0.8rem; padding: var(--space-md); word-break: break-word; overflow-wrap: break-word; }
   .timeline::before { left: 20px; }
@@ -546,6 +601,8 @@ footer {
   .timeline-marker { width: 40px; height: 40px; font-size: 0.95rem; }
   .timeline-body .terminal-body { font-size: 0.7rem; white-space: normal; word-break: break-word; }
   .help-block .terminal-body { font-size: 0.72rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .help-per-cmd { flex-direction: column; align-items: center; }
+  .mini-terminal { max-width: none; width: 100%; }
   .footer-inner { flex-direction: column; text-align: center; }
   .footer-links { justify-content: center; }
 }
@@ -783,7 +840,7 @@ footer {
 <section class="help-section">
   <div class="container">
     <div class="section-label reveal">reference</div>
-    <h2 class="section-heading reveal">Terminal output</h2>
+    <h2 class="section-heading reveal">Built-in help</h2>
     <div class="help-block reveal">
       <div class="terminal-header">
         <span class="terminal-dot red"></span>
@@ -800,6 +857,48 @@ footer {
         <div>&nbsp;&nbsp;<span class="hl-cmd">bunx omo-kit theme</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-desc">Manage themes (validate, generate)</span></div>
         <div>&nbsp;</div>
         <div><span class="hl-comment">Docs:</span> <span class="hl-url">https://srmdn.github.io/rig/cli/</span></div>
+      </div>
+    </div>
+    <p class="help-subtitle reveal">Every command supports <strong>--help</strong> / <strong>-h</strong>:</p>
+    <div class="help-per-cmd reveal">
+      <div class="mini-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">$ omo-kit init --help</span>
+        </div>
+        <div class="terminal-body">
+          <strong>omo-kit init</strong><br>
+          Generate config files<br>
+          interactively.
+        </div>
+      </div>
+      <div class="mini-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">$ omo-kit doctor --help</span>
+        </div>
+        <div class="terminal-body">
+          <strong>omo-kit doctor</strong><br>
+          Validate config files.<br>
+          Exits 0 if clean.
+        </div>
+      </div>
+      <div class="mini-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">$ omo-kit theme --help</span>
+        </div>
+        <div class="terminal-body">
+          <strong>omo-kit theme</strong><br>
+          Manage OpenCode themes.<br>
+          validate / generate.
+        </div>
       </div>
     </div>
   </div>
