@@ -521,14 +521,15 @@ footer {
   .container { padding: 0 var(--space-md); }
   section { padding: var(--space-xl) 0; }
   .hero { min-height: auto; padding: var(--space-2xl) 0 var(--space-xl); }
+  .hero-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
   .hero::before { width: 280px; height: 280px; opacity: 0.5; }
   .hero-title { font-size: clamp(2rem, 10vw, 3rem); }
   .hero-subtitle { font-size: 1rem; max-width: 100%; }
-  .hero-tagline { max-width: 100%; font-size: 0.85rem; }
-  .commands-grid { grid-template-columns: 1fr; }
+  .hero-tagline { max-width: 100%; font-size: 0.85rem; border-left: none; border-top: 2px solid var(--accent-green); padding-left: 0; padding-top: var(--space-sm); margin: 0 auto; }
+  .commands-grid { grid-template-columns: 1fr; max-width: 100%; }
   .features-grid { grid-template-columns: 1fr; }
   .terminal-body { font-size: 0.8rem; padding: var(--space-md); word-break: break-word; overflow-wrap: break-word; }
-  .command-card .cmd-snippet { font-size: 0.75rem; white-space: pre-wrap; word-break: break-all; }
+  .command-card .cmd-snippet { font-size: 0.75rem; white-space: pre-wrap; overflow-x: auto; word-break: keep-all; }
   .help-block .terminal-body { font-size: 0.72rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
   .footer-inner { flex-direction: column; text-align: center; }
   .footer-links { justify-content: center; }
