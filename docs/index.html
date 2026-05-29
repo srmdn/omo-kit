@@ -303,7 +303,7 @@ section {
   font-style: italic;
 }
 
-/* ─── COMMANDS ─── */
+/* ─── COMMAND CARDS ─── */
 .commands-section {
   border-top: 1px solid var(--border-subtle);
 }
@@ -364,18 +364,19 @@ section {
   line-height: var(--leading-normal);
 }
 
-.command-card .cmd-snippet {
-  background: var(--bg-deep);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-md);
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  color: var(--text-primary);
-  overflow-x: auto;
+/* Terminal blocks inside cards fill card width */
+.command-card .terminal-block {
+  max-width: none;
 }
 
-.command-card .cmd-snippet .flag {
+.command-card .terminal-body {
+  font-size: 0.8rem;
+  padding: var(--space-md);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.command-card .terminal-body .flag {
   color: var(--accent-cyan);
 }
 
@@ -529,7 +530,7 @@ footer {
   .commands-grid { grid-template-columns: 1fr; max-width: 100%; }
   .features-grid { grid-template-columns: 1fr; }
   .terminal-body { font-size: 0.8rem; padding: var(--space-md); word-break: break-word; overflow-wrap: break-word; }
-  .command-card .cmd-snippet { font-size: 0.75rem; white-space: pre-wrap; overflow-x: auto; word-break: keep-all; }
+  .command-card .terminal-body { font-size: 0.75rem; white-space: normal; word-break: break-word; }
   .help-block .terminal-body { font-size: 0.72rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
   .footer-inner { flex-direction: column; text-align: center; }
   .footer-links { justify-content: center; }
@@ -617,9 +618,17 @@ footer {
         <div class="cmd-desc">
           Interactive config generator. Pick your stack, choose a provider, answer a few questions &mdash; get a valid config file written to disk.
         </div>
-        <div class="cmd-snippet">
-          <span class="flag">--stack</span> astro|generic|go|node|python|rust|svelte<br>
-          <span class="flag">--provider</span> opencode-go|anthropic|openai|copilot|gemini|grok|deepseek
+        <div class="terminal-block">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">$ omo-kit init --help</span>
+          </div>
+          <div class="terminal-body">
+            <span class="flag">--stack</span> astro|generic|go|node|python|rust|svelte<br>
+            <span class="flag">--provider</span> opencode-go|anthropic|openai|copilot|gemini|grok|deepseek
+          </div>
         </div>
       </div>
 
@@ -629,9 +638,17 @@ footer {
         <div class="cmd-desc">
           Validate your existing config files. Checks structure, required fields, provider-specific keys, and stack compatibility. Exits clean or tells you exactly what&rsquo;s wrong.
         </div>
-        <div class="cmd-snippet">
-          <span class="flag">--fix</span> auto-repair where possible<br>
-          <span class="flag">--verbose</span> show full validation report
+        <div class="terminal-block">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">$ omo-kit doctor --help</span>
+          </div>
+          <div class="terminal-body">
+            <span class="flag">--fix</span> auto-repair where possible<br>
+            <span class="flag">--verbose</span> show full validation report
+          </div>
         </div>
       </div>
 
@@ -641,9 +658,17 @@ footer {
         <div class="cmd-desc">
           Manage OpenCode themes. Validate theme files, generate new ones from templates, or list available themes. Keeps your color configs consistent and valid.
         </div>
-        <div class="cmd-snippet">
-          <span class="flag">--validate</span> check theme file integrity<br>
-          <span class="flag">--generate</span> create theme from template
+        <div class="terminal-block">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">$ omo-kit theme --help</span>
+          </div>
+          <div class="terminal-body">
+            <span class="flag">--validate</span> check theme file integrity<br>
+            <span class="flag">--generate</span> create theme from template
+          </div>
         </div>
       </div>
 
