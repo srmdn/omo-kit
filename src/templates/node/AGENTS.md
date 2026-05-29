@@ -1,8 +1,8 @@
 # AGENTS.md — Node.js Project
 
 ## Identity
+- Set your git identity before first commit: `git config user.name "Your Name" && git config user.email "you@example.com"`
 - Bun runtime, TypeScript
-- Use `git config user.name "srmdn" && git config user.email "mail@saidwp.com"` before first commit
 
 ## Stack
 - Runtime: Bun

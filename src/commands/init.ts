@@ -53,7 +53,9 @@ type Provider =
   | "anthropic"
   | "openai"
   | "github-copilot"
-  | "gemini";
+  | "gemini"
+  | "xai"
+  | "deepseek";
 
 type BudgetTier = "generous" | "frugal" | "free-only";
 
@@ -106,30 +108,48 @@ const MODEL_CATALOG: Record<Provider, ModelPool> = {
     premium: [
       "opencode-go/deepseek-v4-pro",
       "opencode-go/glm-5.1",
-      "opencode-go/minimax-m2.7",
+      "opencode-go/kimi-k2.6",
     ],
-    medium: ["opencode-go/glm-5.1", "opencode-go/minimax-m2.7"],
+    medium: [
+      "opencode-go/glm-5.1",
+      "opencode-go/minimax-m2.7",
+      "opencode-go/kimi-k2.5",
+      "opencode-go/qwen3.5-plus",
+    ],
     free: ["opencode-go/minimax-m2.5-free"],
   },
   anthropic: {
-    premium: ["anthropic/claude-sonnet-4-20250514"],
-    medium: ["anthropic/claude-sonnet-4-20250514"],
-    free: ["anthropic/claude-haiku-3-5-20241022"],
+    premium: ["anthropic/claude-opus-4-8"],
+    medium: ["anthropic/claude-sonnet-4-6"],
+    free: ["anthropic/claude-haiku-4-5"],
   },
   openai: {
-    premium: ["openai/gpt-4o", "openai/gpt-4.1"],
-    medium: ["openai/gpt-4.1-mini"],
+    premium: ["openai/gpt-5.5"],
+    medium: ["openai/gpt-4.1"],
     free: ["openai/gpt-4.1-mini"],
   },
   "github-copilot": {
-    premium: ["github-copilot/gpt-4o", "github-copilot/claude-sonnet"],
-    medium: ["github-copilot/claude-sonnet"],
-    free: ["github-copilot/claude-3.5-haiku"],
+    premium: [
+      "github-copilot/gpt-5.5",
+      "github-copilot/claude-opus-4-8",
+    ],
+    medium: ["github-copilot/claude-sonnet-4-6"],
+    free: ["github-copilot/claude-haiku-4-5"],
   },
   gemini: {
-    premium: ["gemini/gemini-2.5-pro"],
-    medium: ["gemini/gemini-2.5-flash"],
-    free: ["gemini/gemini-2.5-flash"],
+    premium: ["gemini/gemini-3.1-pro"],
+    medium: ["gemini/gemini-3.1-flash"],
+    free: ["gemini/gemini-3.1-flash-lite"],
+  },
+  xai: {
+    premium: ["xai/grok-4.3"],
+    medium: ["xai/grok-4.3"],
+    free: [],
+  },
+  deepseek: {
+    premium: ["deepseek/deepseek-v4-pro"],
+    medium: ["deepseek/deepseek-v4-flash"],
+    free: ["deepseek/deepseek-v4-flash"],
   },
 };
 
@@ -503,7 +523,7 @@ async function promptStack(stacks: Map<string, StackProfile>): Promise<string> {
     { name: "Custom — I'll describe my stack", value: "__custom__" },
   ];
   const choice = await select<string>({
-    message: "What is your project stack?",
+    message: `What is your project stack? (Stacks available: ${stacks.size})`,
     choices,
   });
   if (choice === "__custom__") {
@@ -521,15 +541,18 @@ function capitalize(s: string): string {
 }
 
 async function promptProviders(): Promise<Provider[]> {
+  const choices = [
+    { name: "OpenCode Go (deepseek, glm, kimi, minimax)", value: "opencode-go" as const },
+    { name: "Anthropic (Claude models)", value: "anthropic" as const },
+    { name: "OpenAI (GPT models)", value: "openai" as const },
+    { name: "GitHub Copilot", value: "github-copilot" as const },
+    { name: "Google Gemini", value: "gemini" as const },
+    { name: "xAI (Grok)", value: "xai" as const },
+    { name: "DeepSeek", value: "deepseek" as const },
+  ];
   return checkbox<Provider>({
-    message: "Which model providers do you have access to?",
-    choices: [
-      { name: "OpenCode Go (deepseek, glm, minimax)", value: "opencode-go" },
-      { name: "Anthropic (Claude models)", value: "anthropic" },
-      { name: "OpenAI (GPT models)", value: "openai" },
-      { name: "GitHub Copilot", value: "github-copilot" },
-      { name: "Google Gemini", value: "gemini" },
-    ],
+    message: `Which model providers do you have access to? (Providers available: ${choices.length})`,
+    choices,
     validate: (answers: Provider[]) => {
       if (answers.length === 0) return "Select at least one provider.";
       return true;
