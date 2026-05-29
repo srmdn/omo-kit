@@ -351,6 +351,19 @@ async function generateTheme(): Promise<void> {
 }
 
 export async function themeCommand(): Promise<void> {
+  if (Bun.argv.includes("--help") || Bun.argv.includes("-h")) {
+    console.log(`omo-kit theme — Manage OpenCode themes
+
+Usage:
+  bunx omo-kit theme validate <file>   Validate a theme JSON file
+  bunx omo-kit theme generate          Interactively generate a new theme
+
+Options:
+  --help, -h     Show this help message
+`);
+    return;
+  }
+
   const subcommand = Bun.argv[3];
 
   switch (subcommand) {

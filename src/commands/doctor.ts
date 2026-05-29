@@ -379,6 +379,22 @@ async function checkDirectory(
 // ─── Main entry point ──────────────────────────────────────────────
 
 export async function doctorCommand(): Promise<void> {
+  if (Bun.argv.includes("--help") || Bun.argv.includes("-h")) {
+    console.log(`omo-kit doctor — Validate oh-my-openagent config files
+
+Usage:
+  bunx omo-kit doctor [options]
+
+Options:
+  --help, -h     Show this help message
+
+Checks oh-my-openagent.json, opencode.json, tui.json, and AGENTS.md
+in the current directory and ~/.config/opencode/. Exits 0 if clean,
+1 with details if issues found.
+`);
+    return;
+  }
+
   const home = process.env.HOME ?? Bun.env.HOME ?? "";
   const cwd = process.cwd();
 

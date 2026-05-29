@@ -598,6 +598,21 @@ async function promptBudget(): Promise<BudgetTier> {
 }
 
 export async function initCommand(): Promise<void> {
+  if (Bun.argv.includes("--help") || Bun.argv.includes("-h")) {
+    console.log(`omo-kit init — Generate oh-my-openagent config files interactively
+
+Usage:
+  bunx omo-kit init [options]
+
+Options:
+  --help, -h     Show this help message
+
+Interactive mode walks you through stack selection, provider choice,
+and budget preferences — no flags needed.
+`);
+    return;
+  }
+
   const cwd = process.cwd();
 
   console.log("\n  omo-kit init — generate oh-my-openagent config files\n");
