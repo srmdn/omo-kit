@@ -217,7 +217,7 @@ td code{font-size:0.78rem}
 
 <div class="terminal-block">
 <div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">~/my-project</span></div>
-<div class="terminal-body"><span class="prompt">$ </span>omo-kit init
+<div class="terminal-body"><span class="prompt">$ </span>omo-kit init --stack go --provider opencode-go --budget frugal -y
 
 <span class="out-success">✓</span> Generated 4 files:
   oh-my-openagent.json
@@ -226,7 +226,9 @@ td code{font-size:0.78rem}
   AGENTS.md</div>
 </div>
 
-<p>After generation, run <code>omo-kit doctor</code> to validate everything is correct.</p>
+<p>Or run interactively with <code>omo-kit init</code> — guided prompts for stack, providers, orchestrator, and budget. Flags: <code>--stack</code>, <code>--provider</code>, <code>--budget</code>, <code>-y</code>/<code>--yes</code>.</p>
+
+<p>After generation, run <code>omo-kit doctor --fix</code> to validate and auto-correct.</p>
 
 <!-- ═══ CONFIG WALKTHROUGH ═══ -->
 <h2 id="config-walkthrough">Config walkthrough</h2>
@@ -380,11 +382,11 @@ td code{font-size:0.78rem}
 <!-- ═══ DOCTOR ═══ -->
 <h2 id="doctor">Doctor — validation</h2>
 
-<p>After generating configs, run <code>omo-kit doctor</code> to verify everything:</p>
+<p>After generating configs, run <code>omo-kit doctor</code> to verify everything. Supports <code>--fix</code> for auto-correction and <code>--verbose</code> for detailed output.</p>
 
 <div class="terminal-block">
-<div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">~/my-project</span></div>
-<div class="terminal-body"><span class="prompt">$ </span>omo-kit doctor
+<div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">$ omo-kit doctor --fix</span></div>
+<div class="terminal-body"><span class="prompt">$ </span>omo-kit doctor --fix
 
 <span class="out-dim">── CWD — ~/my-project ──</span>
   <span class="out-success">✓</span> oh-my-openagent.json  <span class="out-dim">valid</span>
@@ -392,10 +394,15 @@ td code{font-size:0.78rem}
   <span class="out-success">✓</span> tui.json               <span class="out-dim">valid</span>
   <span class="out-success">✓</span> AGENTS.md             <span class="out-dim">valid</span>
 
-<span class="out-success">All clear — no issues found</span></div>
+<span class="out-success">Fixable issues</span>
+  <span class="out-flag">→</span> fix $schema: srmdn/ → code-yeongyu/
+  <span class="out-flag">→</span> rename "provider" → "providers"
+<span class="out-success">2 fixes applied.</span> Re-run doctor to verify.</div>
 </div>
 
 <p>What it checks: file structure, required fields, key validation, JSON validity. Exits 0 if clean, 1 with diagnostics if issues found.</p>
+
+<p><strong>Fixable issues:</strong> tab indentation → spaces, legacy <code>srmdn/</code> schema references → <code>code-yeongyu/</code>, singular <code>provider</code> key → <code>providers</code>, legacy filename <code>oh-my-opencode.json</code> → rename. Run with <code>--fix --yes</code> to auto-apply without confirmation, <code>--verbose</code> for per-file scan details.</p>
 
 <!-- ═══ CUSTOMIZATION ═══ -->
 <h2 id="customization">Customization</h2>
@@ -453,9 +460,9 @@ td code{font-size:0.78rem}
 
 <ol>
 <li><strong>Install OpenCode</strong> — <code>brew install opencode</code> or <a href="https://opencode.ai/docs">opencode.ai/docs</a></li>
-<li><strong>Install oMo plugin</strong> — <code>bunx oh-my-openagent install</code></li>
+<li><strong>Install oMo plugin</strong> — <code>bunx omo-kit setup</code></li>
 <li><strong>Connect OpenCode Go</strong> — run <code>/connect</code> in OpenCode, select OpenCode Go, paste API key. <a href="https://opencode.ai/go?ref=MSC94J9ZZC">Subscribe ($10/mo)</a></li>
-<li><strong>Generate config</strong> — <code>bunx omo-kit init</code> in your project root</li>
+<li><strong>Generate config</strong> — <code>bunx omo-kit init</code> in your project root. For non-interactive setup: <code>bunx omo-kit init --stack go --provider opencode-go --budget frugal -y</code></li>
 <li><strong>Validate</strong> — <code>bunx omo-kit doctor</code></li>
 <li><strong>Restart OpenCode</strong> to load the new config</li>
 </ol>

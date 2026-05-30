@@ -746,16 +746,45 @@ footer {
 <section class="commands-section">
   <div class="container">
     <div class="section-label reveal">commands</div>
-    <h2 class="section-heading reveal">Three commands. One workflow.</h2>
+    <h2 class="section-heading reveal">Four commands. One workflow.</h2>
     <div class="timeline">
 
       <div class="timeline-step reveal">
         <div class="timeline-marker">1</div>
         <div class="timeline-body">
+          <h3>setup</h3>
+          <div class="step-usage">$ bunx omo-kit setup</div>
+          <p class="step-desc">
+            Bootstrap your environment. Installs the <strong>oh-my-openagent</strong> plugin into OpenCode. Checks prerequisites, runs the installer, confirms success.
+          </p>
+          <div class="terminal-block">
+            <div class="terminal-header">
+              <span class="terminal-dot red"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+              <span class="terminal-title">terminal</span>
+            </div>
+            <div class="terminal-body">
+              <span class="prompt">$ </span><span class="command">omo-kit setup</span><br>
+              <br>
+              <span class="out-success">✓</span> bun 1.3.14<br>
+              Installing oh-my-openagent plugin...<br>
+              <br>
+              <span class="out-success">✓</span> oh-my-openagent plugin installed<br>
+              <br>
+              Next step: <span class="command">bunx omo-kit init</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-step reveal">
+        <div class="timeline-marker">2</div>
+        <div class="timeline-body">
           <h3>init</h3>
           <div class="step-usage">$ bunx omo-kit init</div>
           <p class="step-desc">
-            Generate config files interactively. Pick your tech stack, choose model providers, set your budget — get a valid <span class="out-highlight">oh-my-openagent.json</span>, <span class="out-highlight">opencode.json</span>, <span class="out-highlight">AGENTS.md</span>, and <span class="out-highlight">tui.json</span> written to disk.
+            Generate config files interactively — or non-interactively with <code>--stack</code>, <code>--provider</code>, <code>--budget</code>, and <code>-y</code> flags. Get a valid <span class="out-highlight">oh-my-openagent.json</span>, <span class="out-highlight">opencode.json</span>, <span class="out-highlight">AGENTS.md</span>, and <span class="out-highlight">tui.json</span> written to disk.
           </p>
           <div class="terminal-block">
             <div class="terminal-header">
@@ -787,12 +816,12 @@ footer {
       </div>
 
       <div class="timeline-step reveal">
-        <div class="timeline-marker">2</div>
+        <div class="timeline-marker">3</div>
         <div class="timeline-body">
           <h3>doctor</h3>
           <div class="step-usage">$ bunx omo-kit doctor</div>
-          <p class="step-desc">
-            Validate your config files. Checks structure, required fields, and provider-specific keys. Clean exit or exact diagnostics with path:field pointers.
+<p class="step-desc">
+            Validate your config files. Checks structure, required fields, and provider keys. Clean exit or exact diagnostics. Use <code>--fix</code> to auto-correct common issues, <code>--verbose</code> for detailed scan output.
           </p>
           <div class="terminal-block">
             <div class="terminal-header">
@@ -820,7 +849,7 @@ footer {
       </div>
 
       <div class="timeline-step reveal">
-        <div class="timeline-marker">3</div>
+        <div class="timeline-marker">4</div>
         <div class="timeline-body">
           <h3>theme</h3>
           <div class="step-usage">$ bunx omo-kit theme</div>
@@ -918,7 +947,8 @@ footer {
         <div><span class="hl-cmd">omo-kit</span> <span class="hl-desc">&mdash; CLI toolkit for oh-my-openagent</span></div>
         <div>&nbsp;</div>
         <div><span class="hl-desc">Usage:</span></div>
-        <div>&nbsp;&nbsp;<span class="hl-cmd">bunx omo-kit init</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-desc">Generate config files interactively</span></div>
+        <div>&nbsp;&nbsp;<span class="hl-cmd">bunx omo-kit setup</span>&nbsp;&nbsp;&nbsp;<span class="hl-desc">Install oMo plugin (run first)</span></div>
+        <div>&nbsp;&nbsp;<span class="hl-cmd">bunx omo-kit init</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-desc">Generate config files interactively</span></div>
         <div>&nbsp;&nbsp;<span class="hl-cmd">bunx omo-kit doctor</span>&nbsp;&nbsp;&nbsp;<span class="hl-desc">Validate existing config files</span></div>
         <div>&nbsp;&nbsp;<span class="hl-cmd">bunx omo-kit theme</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-desc">Manage themes (validate, generate)</span></div>
         <div>&nbsp;</div>
@@ -932,12 +962,26 @@ footer {
           <span class="terminal-dot red"></span>
           <span class="terminal-dot yellow"></span>
           <span class="terminal-dot green"></span>
+          <span class="terminal-title">$ omo-kit setup --help</span>
+        </div>
+        <div class="terminal-body">
+          <strong>omo-kit setup</strong><br>
+          Bootstrap oh-my-openagent.<br>
+          Installs oMo plugin.
+        </div>
+      </div>
+      <div class="mini-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
           <span class="terminal-title">$ omo-kit init --help</span>
         </div>
         <div class="terminal-body">
           <strong>omo-kit init</strong><br>
-          Generate config files<br>
-          interactively.
+          Generate config files.<br>
+          <code>--stack</code> <code>--provider</code><br>
+          <code>--budget</code> <code>-y</code>
         </div>
       </div>
       <div class="mini-terminal">
@@ -950,6 +994,7 @@ footer {
         <div class="terminal-body">
           <strong>omo-kit doctor</strong><br>
           Validate config files.<br>
+          <code>--fix</code> <code>--verbose</code><br>
           Exits 0 if clean.
         </div>
       </div>
