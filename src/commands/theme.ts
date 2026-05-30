@@ -1,4 +1,6 @@
 import { input, confirm } from "@inquirer/prompts";
+import { join } from "node:path";
+import { mkdir } from "node:fs/promises";
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");
@@ -332,7 +334,9 @@ async function generateTheme(): Promise<void> {
     colors,
   };
 
-  const outputPath = `./${name}.json`;
+  const home = process.env.HOME ?? Bun.env.HOME ?? "";
+  const themesDir = home ? join(home, ".config", "opencode", "themes") : ".";
+  const outputPath = join(themesDir, `${name}.json`);
   const file = Bun.file(outputPath);
   if (await file.exists()) {
     const overwrite = await confirm({
@@ -344,10 +348,13 @@ async function generateTheme(): Promise<void> {
     }
   }
 
+  await mkdir(themesDir, { recursive: true });
   await Bun.write(outputPath, JSON.stringify(theme, null, 2));
   console.log(`\n✓ Theme saved to ${outputPath}`);
   console.log(`  Type: ${type}`);
   console.log(`  Colors: ${Object.keys(colors).length} tokens`);
+  console.log(`\n  To use this theme, set "theme": "${name}" in tui.json`);
+  console.log(`  then restart OpenCode.`);
 }
 
 export async function themeCommand(): Promise<void> {
