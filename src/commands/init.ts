@@ -623,10 +623,12 @@ Options:
   --stack <name>      Skip stack selection (e.g. go, rust, astro)
   --provider <names>  Skip provider selection, comma-separated
                       (e.g. opencode-go,anthropic)
+  --budget <tier>     Skip budget prompt (generous, frugal, free-only)
+  -y, --yes           Skip overwrite confirmation
   --help, -h          Show this help message
 
-Interactive mode walks you through stack selection, provider choice,
-and budget preferences — no flags needed.
+Non-interactive example:
+  bunx omo-kit init --stack go --provider opencode-go --budget frugal -y
 `);
     return;
   }
@@ -650,6 +652,16 @@ and budget preferences — no flags needed.
     "xai",
     "deepseek",
   ]);
+
+  const budgetIdx = Bun.argv.indexOf("--budget");
+  const flagBudget: string | null =
+    budgetIdx !== -1 && Bun.argv[budgetIdx + 1]
+      ? Bun.argv[budgetIdx + 1]
+      : null;
+
+  const VALID_BUDGETS = new Set(["generous", "frugal", "free-only"]);
+
+  const isYes = Bun.argv.includes("--yes") || Bun.argv.includes("-y");
 
   const cwd = process.cwd();
 
@@ -698,7 +710,20 @@ and budget preferences — no flags needed.
       providers = await promptProviders();
     }
     const orchestratorModel = await promptOrchestrator(providers);
-    const budget = await promptBudget();
+
+    let budget: BudgetTier;
+    if (flagBudget) {
+      if (!VALID_BUDGETS.has(flagBudget)) {
+        console.error(`\n  Unknown budget: "${flagBudget}"`);
+        console.error(
+          `  Available: ${[...VALID_BUDGETS].join(", ")}`,
+        );
+        process.exit(1);
+      }
+      budget = flagBudget as BudgetTier;
+    } else {
+      budget = await promptBudget();
+    }
 
     const omoConfig = generateOhMyOpenagent(
       providers,
@@ -745,13 +770,21 @@ and budget preferences — no flags needed.
     }
 
     if (existing.length > 0) {
-      console.log(`\n  Existing files found:`);
-      for (const p of existing) console.log(`    ${p}`);
-      const proceed = await confirm({
-        message: "Overwrite these files?",
-        default: false,
-      });
-      if (!proceed) {
+      const overwrite = isYes
+        ? true
+        : await confirm({
+            message: "Overwrite these files?",
+            default: false,
+          });
+      if (isYes) {
+        console.log(
+          `\n  (overwriting ${existing.length} file${existing.length > 1 ? "s" : ""} — --yes)`,
+        );
+      } else {
+        console.log(`\n  Existing files found:`);
+        for (const p of existing) console.log(`    ${p}`);
+      }
+      if (!overwrite) {
         console.log("  Aborted.\n");
         process.exit(0);
       }
