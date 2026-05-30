@@ -4,7 +4,7 @@
 - Set your git identity before first commit: `git config user.name "Your Name" && git config user.email "you@example.com"`
 
 ## Stack
-- Runtime: Python 3.12+
+- Runtime: Python 3.13+
 - Package manager: uv
 - Linter: ruff
 - Formatter: ruff format

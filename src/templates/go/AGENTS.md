@@ -5,7 +5,7 @@
 - Go module-based project
 
 ## Stack
-- Go 1.22+
+- Go 1.26+
 - Database: modernc.org/sqlite (pure Go SQLite, no CGO)
 - Deploy: systemd + nginx on Ubuntu 24.04
 
