@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import pkg from "../package.json" with { type: "json" };
 import { initCommand } from "./commands/init";
 import { setupCommand } from "./commands/setup";
 import { doctorCommand } from "./commands/doctor";
@@ -22,7 +23,7 @@ async function main() {
       break;
     case "--version":
     case "-v":
-      console.log("omo-kit v0.1.0");
+      console.log(`omo-kit v${pkg.version}`);
       break;
     case undefined:
     case "--help":
