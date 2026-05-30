@@ -6,7 +6,7 @@
 <title>omo-kit — CLI toolkit for oh-my-openagent</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
-<meta name="description" content="Generate configs. Validate them. Manage themes. No hand-editing JSON.">
+<meta name="description" content="Generate configs. Validate them. Manage themes. Minimal hand-editing.">
 <style>
 /* ─── DESIGN TOKENS ─── */
 :root {
@@ -716,7 +716,7 @@ footer {
       CLI toolkit for <strong>oh-my-openagent</strong> <span class="dim">&</span> <strong>OpenCode</strong>
     </p>
     <p class="hero-tagline reveal">
-      <strong>Generate configs.</strong> Validate them. Manage themes. <strong>No hand-editing JSON.</strong>
+      <strong>Generate configs.</strong> Validate them. Manage themes. <strong>Minimal hand-editing.</strong>
     </p>
   </div>
 </section>
@@ -792,7 +792,7 @@ footer {
           <h3>doctor</h3>
           <div class="step-usage">$ bunx omo-kit doctor</div>
           <p class="step-desc">
-            Validate your config files. Checks structure, required fields, provider-specific keys, and stack compatibility. Clean exit or exact diagnostics with file:line pointers.
+            Validate your config files. Checks structure, required fields, and provider-specific keys. Clean exit or exact diagnostics with path:field pointers.
           </p>
           <div class="terminal-block">
             <div class="terminal-header">
@@ -813,7 +813,7 @@ footer {
               <span class="out-dim">── ~/.config/opencode ──</span><br>
               &nbsp;&nbsp;<span class="out-success">✓</span> oh-my-openagent.json&nbsp;&nbsp;<span class="out-dim">valid</span><br>
               <br>
-              <span class="out-success">All checks passed</span><span class="out-dim"> (8/8 files)</span>
+              <span class="out-success">All clear — no issues found</span>
             </div>
           </div>
         </div>
@@ -825,7 +825,7 @@ footer {
           <h3>theme</h3>
           <div class="step-usage">$ bunx omo-kit theme</div>
           <p class="step-desc">
-            Manage OpenCode themes. Validate existing theme files, generate new ones from templates, or list available themes. Keeps your color configs consistent.
+            Manage OpenCode themes. Validate existing theme files or generate new ones interactively. Keeps your color configs consistent.
           </p>
           <div class="terminal-block">
             <div class="terminal-header">
@@ -885,17 +885,17 @@ footer {
           <span class="tag"><span class="tag-dot"></span>xAI Grok</span>
           <span class="tag"><span class="tag-dot"></span>DeepSeek</span>
         </div>
-        <p class="feature-desc">Seven provider configs with correct model identifiers, API endpoints, and required environment variables. No guessing, no docs diving.</p>
+        <p class="feature-desc">Seven provider configs with correct model identifiers and fallback chains. No guessing model IDs, no docs diving.</p>
       </div>
 
       <div class="feature-group reveal">
         <h3><span class="icon">&#9670;</span> Interactive prompts</h3>
-        <p class="feature-desc">Guided setup walks you through every option. No memorizing flag names. Pick from lists, confirm defaults, get a valid config file at the end.</p>
+        <p class="feature-desc">Guided setup walks you through core options — stack, providers, orchestrator, and budget. Pick from lists, confirm defaults, get a valid config file at the end.</p>
       </div>
 
       <div class="feature-group reveal">
         <h3><span class="icon">&#9670;</span> Validation</h3>
-        <p class="feature-desc">Structural checks, required field enforcement, provider-specific key validation, and stack compatibility verification. <code>doctor</code> catches what you missed.</p>
+        <p class="feature-desc">Structural checks, required field enforcement, and provider key validation. <code>doctor</code> catches misconfigurations before they cause runtime failures.</p>
       </div>
 
     </div>
