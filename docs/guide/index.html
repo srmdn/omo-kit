@@ -455,6 +455,20 @@ td code{font-size:0.78rem}
 }</div>
 </div>
 
+<h3>Use a custom theme</h3>
+
+<p>After running <code>omo-kit theme generate</code>, you have a <code>~/.config/opencode/themes/my-theme.json</code> file. Tell OpenCode to use it:</p>
+
+<div class="terminal-block">
+<div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">tui.json</span></div>
+<div class="terminal-body">{
+  <span class="out-flag">"theme"</span>: "my-theme",          <span class="out-dim">// ← change from "default"</span>
+  "showThinking": true
+}</div>
+</div>
+
+<p>The theme name must match the filename (without <code>.json</code>) in <code>~/.config/opencode/themes/</code>. Restart OpenCode to see the change. Validate with <code>omo-kit doctor</code> before restarting.</p>
+
 <!-- ═══ QUICK START ═══ -->
 <h2 id="quick-start">Quick start</h2>
 
