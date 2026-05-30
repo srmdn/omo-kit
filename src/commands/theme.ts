@@ -57,83 +57,158 @@ function isDark(hex: string): boolean {
   return lum < 128;
 }
 
-type TokenMap = Record<string, string>;
+type Defs = Record<string, string>;
 
-const REQUIRED_TOKENS = [
-  "background",
-  "foreground",
+type ThemeValue = { dark: string; light?: string };
+
+type ThemeMap = Record<string, ThemeValue>;
+
+const REQUIRED_DEF_KEYS = ["bg", "fg", "ac", "sel", "com", "err", "warn"];
+
+const REQUIRED_THEME_KEYS = [
+  "primary",
+  "secondary",
   "accent",
-  "selection",
-  "comment",
   "error",
   "warning",
+  "success",
+  "info",
+  "text",
+  "textMuted",
+  "background",
+  "backgroundPanel",
+  "backgroundElement",
+  "border",
+  "borderActive",
+  "borderSubtle",
+  "diffAdded",
+  "diffRemoved",
+  "diffContext",
+  "diffHunkHeader",
+  "syntaxComment",
+  "syntaxKeyword",
+  "syntaxFunction",
+  "syntaxVariable",
+  "syntaxString",
+  "syntaxNumber",
+  "syntaxOperator",
 ];
 
 function isValidHex(value: unknown): value is string {
   return typeof value === "string" && /^#[0-9a-fA-F]{3,8}$/.test(value);
 }
 
-function isValidTokenValue(value: unknown): boolean {
-  if (typeof value === "string") return /^#[0-9a-fA-F]{3,8}$/.test(value);
-  if (typeof value === "object" && value !== null) {
-    const v = value as Record<string, unknown>;
-    const d = v.dark;
-    const l = v.light;
-    return typeof d === "string" && typeof l === "string";
-  }
-  return false;
+function isValidDefValue(value: unknown): value is string {
+  return typeof value === "string" && /^#[0-9a-fA-F]{3,8}$/.test(value);
 }
 
-function formatTokenValue(value: unknown): string {
-  if (typeof value === "string") return value;
-  if (typeof value === "object" && value !== null) {
-    const v = value as Record<string, unknown>;
-    return `dark=${String(v.dark)} light=${String(v.light)}`;
-  }
-  return JSON.stringify(value);
+function isValidThemeValue(value: unknown): value is ThemeValue {
+  if (typeof value !== "object" || value === null) return false;
+  const v = value as Record<string, unknown>;
+  if (typeof v.dark !== "string") return false;
+  if (v.light !== undefined && typeof v.light !== "string") return false;
+  return true;
 }
 
-function validateTokens(
-  tokens: TokenMap,
-  label: string,
+function validateDefs(
+  defs: unknown,
 ): { errors: string[]; warnings: string[]; passes: number; checks: number } {
   const errors: string[] = [];
   const warnings: string[] = [];
   let passes = 0;
   let checks = 0;
 
-  const tokenCount = Object.keys(tokens).length;
-  console.log(`✓ ${label}: ${tokenCount} color tokens`);
-  passes++;
-  checks++;
-
-  for (const token of REQUIRED_TOKENS) {
+  if (typeof defs !== "object" || defs === null) {
+    errors.push("Missing or invalid defs object");
     checks++;
-    const value = tokens[token];
-    if (isValidTokenValue(value)) {
+    return { errors, warnings, passes, checks };
+  }
+
+  const d = defs as Record<string, unknown>;
+  const keys = Object.keys(d);
+  checks++;
+  passes++;
+  console.log(`✓ defs: ${keys.length} color tokens`);
+
+  for (const key of REQUIRED_DEF_KEYS) {
+    checks++;
+    const value = d[key];
+    if (isValidDefValue(value)) {
       passes++;
-      console.log(`  ✓ ${token}: ${formatTokenValue(value)}`);
+      console.log(`  ✓ defs.${key}: ${value}`);
     } else if (value === undefined) {
-      warnings.push(`Missing color token: "${token}"`);
-      console.log(`  ✗ ${token}: missing`);
+      warnings.push(`Missing def: "${key}"`);
+      console.log(`  ✗ defs.${key}: missing`);
     } else {
-      errors.push(
-        `Invalid color value for "${token}": ${formatTokenValue(value)}`,
-      );
-      console.log(`  ✗ ${token}: invalid — ${formatTokenValue(value)}`);
+      errors.push(`Invalid hex for defs."${key}": ${JSON.stringify(value)}`);
+      console.log(`  ✗ defs.${key}: invalid — ${JSON.stringify(value)}`);
     }
   }
 
-  for (const [key, value] of Object.entries(tokens)) {
-    if (REQUIRED_TOKENS.includes(key)) continue;
+  for (const [key, value] of Object.entries(d)) {
+    if (REQUIRED_DEF_KEYS.includes(key)) continue;
     checks++;
-    if (isValidTokenValue(value)) {
+    if (isValidDefValue(value)) {
       passes++;
     } else {
-      errors.push(
-        `Invalid color value for "${key}": ${formatTokenValue(value)}`,
-      );
-      console.log(`  ✗ ${key}: invalid — ${formatTokenValue(value)}`);
+      errors.push(`Invalid hex for defs."${key}": ${JSON.stringify(value)}`);
+      console.log(`  ✗ defs.${key}: invalid — ${JSON.stringify(value)}`);
+    }
+  }
+
+  return { errors, warnings, passes, checks };
+}
+
+function validateThemeTokens(
+  theme: unknown,
+  defKeys: Set<string>,
+): { errors: string[]; warnings: string[]; passes: number; checks: number } {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  let passes = 0;
+  let checks = 0;
+
+  if (typeof theme !== "object" || theme === null) {
+    errors.push("Missing or invalid theme object");
+    checks++;
+    return { errors, warnings, passes, checks };
+  }
+
+  const t = theme as Record<string, unknown>;
+  checks++;
+  passes++;
+  console.log(`✓ theme: ${Object.keys(t).length} semantic tokens`);
+
+  for (const key of REQUIRED_THEME_KEYS) {
+    checks++;
+    const value = t[key];
+    if (!isValidThemeValue(value)) {
+      errors.push(`Missing or invalid theme."${key}" (must have { dark, light? })`);
+      console.log(`  ✗ theme.${key}: missing or invalid`);
+      continue;
+    }
+    const tv = value as ThemeValue;
+    const darkOk = defKeys.has(tv.dark);
+    const lightOk = tv.light === undefined || defKeys.has(tv.light);
+    if (darkOk && lightOk) {
+      passes++;
+      const lightInfo = tv.light ? `light=${tv.light}` : "light=none";
+      console.log(`  ✓ theme.${key}: dark=${tv.dark} ${lightInfo}`);
+    } else {
+      if (!darkOk) errors.push(`theme."${key}".dark "${tv.dark}" not found in defs`);
+      if (!lightOk  && tv.light !== undefined) errors.push(`theme."${key}".light "${tv.light}" not found in defs`);
+      console.log(`  ✗ theme.${key}: unresolved refs`);
+    }
+  }
+
+  for (const [key, value] of Object.entries(t)) {
+    if (REQUIRED_THEME_KEYS.includes(key)) continue;
+    checks++;
+    if (!isValidThemeValue(value)) {
+      errors.push(`Invalid theme."${key}" — must be { dark, light? }`);
+      console.log(`  ✗ theme.${key}: invalid`);
+    } else {
+      passes++;
     }
   }
 
@@ -186,40 +261,42 @@ async function validateTheme(): Promise<void> {
     console.log("✗ $schema: missing or invalid");
   }
 
-  totalChecks++;
-  if (typeof obj.name === "string" && obj.name.length > 0) {
-    totalPasses++;
-    console.log(`✓ name: ${obj.name}`);
-  } else {
-    allWarnings.push("Missing name (recommended for generated themes)");
-    console.log("✗ name: missing");
-  }
+  const hasTheme = typeof obj.theme === "object" && obj.theme !== null;
+  const hasColors = typeof obj.colors === "object" && obj.colors !== null;
 
-  const tokens = obj.theme ?? obj.colors;
-  if (typeof tokens === "object" && tokens !== null) {
-    const result = validateTokens(
-      tokens as TokenMap,
-      typeof obj.theme !== "undefined" ? "theme" : "colors",
+  if (!hasTheme && hasColors) {
+    allErrors.push(
+      "Detected old format (top-level 'colors'). Please re-generate with 'bunx omo-kit theme generate'",
     );
-    allErrors.push(...result.errors);
-    allWarnings.push(...result.warnings);
-    totalPasses += result.passes;
-    totalChecks += result.checks;
-  } else {
-    allErrors.push("Missing or invalid theme/colors object");
-    console.log("✗ theme/colors: missing or invalid");
+    console.log("✗ format: old flat colors format — please re-generate");
     totalChecks++;
   }
 
-  if (typeof obj.type === "string") {
-    if (obj.type === "dark" || obj.type === "light") {
-      console.log(`✓ type: ${obj.type}`);
-    } else {
-      allWarnings.push(
-        `type should be "dark" or "light", got "${obj.type}"`,
-      );
-      console.log(`✗ type: invalid value "${obj.type}"`);
-    }
+  let defKeys = new Set<string>();
+  if (typeof obj.defs === "object" && obj.defs !== null) {
+    const defsObj = obj.defs as Record<string, unknown>;
+    defKeys = new Set(Object.keys(defsObj).filter((k) => typeof defsObj[k] === "string"));
+    const defResult = validateDefs(obj.defs);
+    allErrors.push(...defResult.errors);
+    allWarnings.push(...defResult.warnings);
+    totalPasses += defResult.passes;
+    totalChecks += defResult.checks;
+  } else {
+    allErrors.push("Missing or invalid defs object");
+    console.log("✗ defs: missing or invalid");
+    totalChecks++;
+  }
+
+  if (hasTheme) {
+    const themeResult = validateThemeTokens(obj.theme, defKeys);
+    allErrors.push(...themeResult.errors);
+    allWarnings.push(...themeResult.warnings);
+    totalPasses += themeResult.passes;
+    totalChecks += themeResult.checks;
+  } else {
+    allErrors.push("Missing theme object");
+    console.log("✗ theme: missing");
+    totalChecks++;
   }
 
   console.log(`\n── Validation Report ──`);
@@ -249,33 +326,15 @@ async function validateTheme(): Promise<void> {
   }
 }
 
-interface ThemeColors {
-  background: string;
-  foreground: string;
-  accent: string;
-  selection: string;
-  comment: string;
-  error: string;
-  warning: string;
-  success: string;
-  info: string;
-  textMuted: string;
-  border: string;
-  borderActive: string;
-  backgroundPanel: string;
-  backgroundElement: string;
+interface GeneratedTheme {
+  $schema: string;
+  defs: Defs;
+  theme: ThemeMap;
 }
 
-const SELECTION_BLEND = 0.25;
-const COMMENT_BLEND = 0.4;
-const MUTED_BLEND = 0.35;
-const BORDER_BLEND = 0.92;
-const PANEL_SHIFT = 0.04;
-const ELEMENT_SHIFT = 0.08;
-
-const ERROR_COLOR = "#F94343";
-const WARNING_COLOR = "#D8A441";
-const SUCCESS_COLOR = "#46DFAE";
+const DEFAULT_SUCCESS = "#46DFAE";
+const DEFAULT_ERROR = "#F94343";
+const DEFAULT_WARNING = "#D8A441";
 
 async function generateTheme(): Promise<void> {
   const name = await input({
@@ -307,31 +366,104 @@ async function generateTheme(): Promise<void> {
         : "Must be a 6-digit hex color",
   });
 
-  const type = isDark(bg) ? "dark" : "light";
-  const isDarkTheme = type === "dark";
+  const selection = await input({
+    message: "Selection highlight color (hex, e.g. #3a4b7a):",
+    default: blend(accent, bg, 0.25),
+    validate: (v: string) =>
+      /^#[0-9a-fA-F]{6}$/.test(v)
+        ? true
+        : "Must be a 6-digit hex color",
+  });
 
-  const colors: ThemeColors = {
-    background: bg,
-    foreground: fg,
-    accent,
-    selection: blend(accent, bg, SELECTION_BLEND),
-    comment: blend(fg, bg, COMMENT_BLEND),
-    error: ERROR_COLOR,
-    warning: WARNING_COLOR,
-    success: SUCCESS_COLOR,
-    info: accent,
-    textMuted: blend(fg, bg, MUTED_BLEND),
-    border: blend(bg, fg, BORDER_BLEND),
-    borderActive: accent,
-    backgroundPanel: isDarkTheme ? lighten(bg, PANEL_SHIFT) : darken(bg, PANEL_SHIFT),
-    backgroundElement: isDarkTheme ? lighten(bg, ELEMENT_SHIFT) : darken(bg, ELEMENT_SHIFT),
+  const comment = await input({
+    message: "Comment / muted text color (hex, e.g. #6a6a8a):",
+    default: blend(fg, bg, 0.4),
+    validate: (v: string) =>
+      /^#[0-9a-fA-F]{6}$/.test(v)
+        ? true
+        : "Must be a 6-digit hex color",
+  });
+
+  const err = await input({
+    message: "Error color (hex, e.g. #F94343):",
+    default: DEFAULT_ERROR,
+    validate: (v: string) =>
+      /^#[0-9a-fA-F]{6}$/.test(v)
+        ? true
+        : "Must be a 6-digit hex color",
+  });
+
+  const warn = await input({
+    message: "Warning color (hex, e.g. #D8A441):",
+    default: DEFAULT_WARNING,
+    validate: (v: string) =>
+      /^#[0-9a-fA-F]{6}$/.test(v)
+        ? true
+        : "Must be a 6-digit hex color",
+  });
+
+  const suc = DEFAULT_SUCCESS;
+  const inf = accent;
+  const txtMuted = blend(fg, bg, 0.5);
+  const bgPanel = lighten(bg, 0.10);
+  const bgElement = lighten(bg, 0.18);
+  const border = lighten(bg, 0.20);
+  const borderSubtle = lighten(bg, 0.12);
+  const diffAdd = blend(suc, bg, 0.3);
+  const diffRem = blend(err, bg, 0.3);
+
+  const defs: Defs = {
+    bg,
+    fg,
+    ac: accent,
+    sel: selection,
+    com: comment,
+    err,
+    warn,
+    suc,
+    inf,
+    txtMuted,
+    bgPanel,
+    bgElement,
+    border,
+    borderSubtle,
+    diffAdd,
+    diffRem,
   };
 
-  const theme = {
+  const theme: ThemeMap = {
+    primary: { dark: "ac", light: "ac" },
+    secondary: { dark: "sel", light: "sel" },
+    accent: { dark: "ac", light: "ac" },
+    error: { dark: "err", light: "err" },
+    warning: { dark: "warn", light: "warn" },
+    success: { dark: "suc", light: "suc" },
+    info: { dark: "inf", light: "inf" },
+    text: { dark: "fg", light: "fg" },
+    textMuted: { dark: "txtMuted", light: "txtMuted" },
+    background: { dark: "bg", light: "bg" },
+    backgroundPanel: { dark: "bgPanel", light: "bgPanel" },
+    backgroundElement: { dark: "bgElement", light: "bgElement" },
+    border: { dark: "border", light: "border" },
+    borderActive: { dark: "ac", light: "ac" },
+    borderSubtle: { dark: "borderSubtle", light: "borderSubtle" },
+    diffAdded: { dark: "diffAdd", light: "diffAdd" },
+    diffRemoved: { dark: "diffRem", light: "diffRem" },
+    diffContext: { dark: "bgPanel", light: "bgPanel" },
+    diffHunkHeader: { dark: "ac", light: "ac" },
+    syntaxComment: { dark: "com", light: "com" },
+    syntaxKeyword: { dark: "ac", light: "ac" },
+    syntaxFunction: { dark: "fg", light: "fg" },
+    syntaxVariable: { dark: "fg", light: "fg" },
+    syntaxString: { dark: "suc", light: "suc" },
+    syntaxNumber: { dark: "warn", light: "warn" },
+    syntaxOperator: { dark: "txtMuted", light: "txtMuted" },
+  };
+
+  const output: GeneratedTheme = {
     $schema: "https://opencode.ai/theme.json",
-    name,
-    type,
-    colors,
+    defs,
+    theme,
   };
 
   const home = process.env.HOME ?? Bun.env.HOME ?? "";
@@ -349,10 +481,12 @@ async function generateTheme(): Promise<void> {
   }
 
   await mkdir(themesDir, { recursive: true });
-  await Bun.write(outputPath, JSON.stringify(theme, null, 2));
+  await Bun.write(outputPath, JSON.stringify(output, null, 2));
+
+  const type = isDark(bg) ? "dark" : "light";
   console.log(`\n✓ Theme saved to ${outputPath}`);
   console.log(`  Type: ${type}`);
-  console.log(`  Colors: ${Object.keys(colors).length} tokens`);
+  console.log(`  Colors: ${Object.keys(defs).length} tokens`);
   console.log(`\n  To use this theme, set "theme": "${name}" in tui.json`);
   console.log(`  then restart OpenCode.`);
 }
