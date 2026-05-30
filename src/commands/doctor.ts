@@ -431,21 +431,6 @@ function validateOpencode(
     return;
   }
 
-  if (hasKey(json, "provider") && !hasKey(json, "providers")) {
-    ctx.warnings++;
-    warn(
-      'Key "provider" (singular) found — consider using "providers" (plural)',
-    );
-    if (isFix) {
-      collector.addText(
-        filePath,
-        `rename "provider" → "providers"`,
-        '"provider"',
-        '"providers"',
-      );
-    }
-  }
-
   const schema = stringValue(json.$schema) ?? "";
   if (schema.includes("srmdn/")) {
     ctx.warnings++;
