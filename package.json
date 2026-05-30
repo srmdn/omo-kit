@@ -11,7 +11,8 @@
   },
   "scripts": {
     "dev": "bun run src/index.ts",
-    "typecheck": "bun --check src/"
+    "typecheck": "bun --check src/",
+    "test": "bun test src/"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0"

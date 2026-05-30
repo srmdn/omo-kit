@@ -28,7 +28,7 @@ interface StackProfile {
   category_overrides?: Record<string, CategoryOverride>;
 }
 
-async function discoverStacks(): Promise<Map<string, StackProfile>> {
+export async function discoverStacks(): Promise<Map<string, StackProfile>> {
   const stacks = new Map<string, StackProfile>();
   const entries = await readdir(TEMPLATES_DIR, { withFileTypes: true });
   for (const e of entries) {
@@ -103,7 +103,7 @@ interface ModelPool {
   free: string[];
 }
 
-const MODEL_CATALOG: Record<Provider, ModelPool> = {
+export const MODEL_CATALOG: Record<Provider, ModelPool> = {
   "opencode-go": {
     premium: [
       "opencode-go/deepseek-v4-pro",
@@ -266,7 +266,7 @@ function pickFallbacks(
   return unique.slice(0, 3).map((model) => ({ model }));
 }
 
-function generateOhMyOpenagent(
+export function generateOhMyOpenagent(
   providers: Provider[],
   budget: BudgetTier,
   orchestratorModel: string,
@@ -341,7 +341,7 @@ function generateOhMyOpenagent(
   };
 }
 
-function generateOpenCodeConfig(orchestratorModel: string): OpenCodeConfig {
+export function generateOpenCodeConfig(orchestratorModel: string): OpenCodeConfig {
   return {
     $schema: "https://opencode.ai/config.json",
     ohMyOpenagent: {
@@ -351,7 +351,7 @@ function generateOpenCodeConfig(orchestratorModel: string): OpenCodeConfig {
   };
 }
 
-function generateTuiConfig(): TuiConfig {
+export function generateTuiConfig(): TuiConfig {
   return {
     theme: "default",
     showThinking: true,
