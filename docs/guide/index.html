@@ -175,7 +175,7 @@ td code{font-size:0.78rem}
 
 <h1>Guide — Understanding oh-my-openagent & omo-kit</h1>
 
-<p>This guide explains what oh-my-openagent does, why you need it, and how <strong>omo-kit</strong> generates the configuration for you. No hand-editing JSON. No guessing model IDs. No wondering why your agent picked the wrong model.</p>
+<p>This guide explains what oh-my-openagent does, why you need it, and how <strong>omo-kit</strong> generates the configuration for you. Jump-start your setup with sensible defaults — then tweak if needed.</p>
 
 <!-- ═══ WHAT IS OMO ═══ -->
 <h2 id="what-is-omo">What is oh-my-openagent?</h2>
@@ -198,18 +198,7 @@ td code{font-size:0.78rem}
 
 <p>Without oMo, OpenCode uses <strong>one model for everything</strong> — your code search uses the same expensive reasoning model as your architecture decisions. This is like sending a junior dev to design your database, or a senior architect to fix a typo.</p>
 
-<p>With oMo, each agent role gets a model matched to its complexity:</p>
-
-<div class="table-wrap"><table>
-<thead><tr><th>Role</th><th>Task</th><th>Model needed</th><th>Typical cost/M output</th></tr></thead>
-<tbody>
-<tr><td><strong>Sisyphus</strong></td><td>Orchestrate complex tasks</td><td>Deep reasoning</td><td>$0.87</td></tr>
-<tr><td><strong>Explore</strong></td><td>Search codebase</td><td>Fast, cheap</td><td>$1.20</td></tr>
-<tr><td><strong>Quick tasks</strong></td><td>Fix typos, small edits</td><td>Cheapest possible</td><td>Free</td></tr>
-</tbody>
-</table></div>
-
-<p>Without this routing, every code search costs the same as an architecture decision. <strong>omo-kit generates the routing table so you don't have to.</strong></p>
+<p>With oMo, each agent role gets a model matched to its complexity — the orchestrator uses a reasoning model, code search uses a fast cheap model, and trivial fixes use the free tier.</p>
 
 <!-- ═══ WHAT OMO-KIT GENERATES ═══ -->
 <h2 id="what-omo-kit-generates">What omo-kit generates</h2>
@@ -327,11 +316,10 @@ td code{font-size:0.78rem}
 <div class="terminal-body"><span class="prompt">1.</span> opencode-go/deepseek-v4-pro    <span class="out-dim">← 80.6% SWE-bench, 93.5% LiveCodeBench</span>
 <span class="prompt">2.</span> opencode-go/glm-5.1          <span class="out-dim">← 58.4 SWE-Bench Pro (#1 globally)</span>
 <span class="prompt">3.</span> opencode-go/minimax-m2.7      <span class="out-dim">← 56.22 SWE-Bench Pro, 100 tok/s</span>
-<span class="prompt">4.</span> opencode-go/minimax-m2.5-free <span class="out-dim">← 80.2% SWE-bench Verified, free</span>
-<span class="prompt">5.</span> opencode-go/big-pickle        <span class="out-dim">← Last resort, unknown benchmarks</span></div>
+<span class="prompt">4.</span> opencode-go/minimax-m2.5-free <span class="out-dim">← 80.2% SWE-bench Verified, free</span></div>
 </div>
 
-<p>The order is backed by public benchmarks, not vibes. GLM-5.1 sits first in fallback because it beats GPT-5.4 and Claude Opus 4.6 on SWE-Bench Pro. MiniMax M2.7 is 3-4x cheaper than GLM-5.1 with near-Opus quality. M2.5-free is the safety net — free, so it can't break the bank.</p>
+<p>The order is backed by public benchmarks, not vibes. GLM-5.1 sits first in fallback based on SWE-Bench Pro performance. MiniMax M2.7 follows with competitive benchmarks at lower cost. M2.5-free is the safety net — free, so it can't break the bank.</p>
 
 <div class="note"><strong>big-pickle transparency:</strong> <code>big-pickle</code> is an OpenCode Go free-tier model with no published benchmarks. It only activates if <code>minimax-m2.5-free</code> fails, so risk is minimal. It appears as the final fallback for free-tier categories (quick, unspecified-low, writing).</div>
 
@@ -359,15 +347,15 @@ td code{font-size:0.78rem}
 <p>During <code>init</code>, you pick one of three budget strategies. This affects which model pool each agent tier pulls from:</p>
 
 <div class="table-wrap"><table>
-<thead><tr><th>Tier</th><th>Premium agents</th><th>Medium agents</th><th>Free agents</th><th>Monthly cost</th></tr></thead>
+<thead><tr><th>Tier</th><th>Premium agents</th><th>Medium agents</th><th>Free agents</th></tr></thead>
 <tbody>
-<tr><td><strong>generous</strong></td><td>DeepSeek V4 Pro</td><td>GLM-5.1, MiniMax M2.7</td><td>MiniMax M2.5-free</td><td>$10–30</td></tr>
-<tr><td><strong>frugal</strong></td><td>GLM-5.1</td><td>MiniMax M2.7</td><td>MiniMax M2.5-free</td><td>$5–10</td></tr>
-<tr><td><strong>free-only</strong></td><td>MiniMax M2.5-free</td><td>MiniMax M2.5-free</td><td>MiniMax M2.5-free</td><td>$0</td></tr>
+<tr><td><strong>generous</strong></td><td>DeepSeek V4 Pro</td><td>GLM-5.1, MiniMax M2.7</td><td>MiniMax M2.5-free</td></tr>
+<tr><td><strong>frugal</strong></td><td>GLM-5.1</td><td>MiniMax M2.7</td><td>MiniMax M2.5-free</td></tr>
+<tr><td><strong>free-only</strong></td><td>MiniMax M2.5-free</td><td>MiniMax M2.5-free</td><td>MiniMax M2.5-free</td></tr>
 </tbody>
 </table></div>
 
-<p><strong>Frugal</strong> is the recommended starting point — 90% of the quality at 30% of the cost.</p>
+<p><strong>Frugal</strong> is the recommended starting point — premium model for the orchestrator, medium/free for everything else.</p>
 
 <!-- ═══ STACK BEHAVIOR ═══ -->
 <h2 id="stack-behavior">Stack-specific behavior</h2>
@@ -404,10 +392,10 @@ td code{font-size:0.78rem}
   <span class="out-success">✓</span> tui.json               <span class="out-dim">valid</span>
   <span class="out-success">✓</span> AGENTS.md             <span class="out-dim">valid</span>
 
-<span class="out-success">All checks passed</span><span class="out-dim"> (4/4 files)</span></div>
+<span class="out-success">All clear — no issues found</span></div>
 </div>
 
-<p>What it checks: file structure, required fields, provider-specific keys, stack compatibility, JSON validity. Exits 0 if clean, 1 with diagnostics if issues found.</p>
+<p>What it checks: file structure, required fields, key validation, JSON validity. Exits 0 if clean, 1 with diagnostics if issues found.</p>
 
 <!-- ═══ CUSTOMIZATION ═══ -->
 <h2 id="customization">Customization</h2>
@@ -424,7 +412,7 @@ td code{font-size:0.78rem}
       <span class="out-flag">"model"</span>: "anthropic/claude-opus-4-8",       <span class="out-dim">// ← changed from opencode-go/...</span>
       <span class="out-flag">"fallback_models"</span>: [
         { "model": "openai/gpt-5.5" },
-        { "model": "google/gemini-3.1-pro" }
+        { "model": "gemini/gemini-3.1-pro" }
       ]
     }
   }
@@ -465,7 +453,7 @@ td code{font-size:0.78rem}
 
 <ol>
 <li><strong>Install OpenCode</strong> — <code>brew install opencode</code> or <a href="https://opencode.ai/docs">opencode.ai/docs</a></li>
-<li><strong>Install oMo plugin</strong> — <code>bunx oh-my-opencode install</code></li>
+<li><strong>Install oMo plugin</strong> — <code>bunx oh-my-openagent install</code></li>
 <li><strong>Connect OpenCode Go</strong> — run <code>/connect</code> in OpenCode, select OpenCode Go, paste API key. <a href="https://opencode.ai/go?ref=MSC94J9ZZC">Subscribe ($10/mo)</a></li>
 <li><strong>Generate config</strong> — <code>bunx omo-kit init</code> in your project root</li>
 <li><strong>Validate</strong> — <code>bunx omo-kit doctor</code></li>
