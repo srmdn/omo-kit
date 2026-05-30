@@ -88,21 +88,66 @@ td code{font-size:0.78rem}
 ::-webkit-scrollbar-track{background:var(--bg-void)}
 ::-webkit-scrollbar-thumb{background:var(--border-accent);border-radius:3px}
 
+/* Nav toggle (hidden checkbox) */
+.nav-toggle{display:none}
+
+/* Nav overlay */
+.nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(2px);z-index:99;cursor:pointer}
+.nav-toggle:checked ~ .nav-overlay{display:block}
+
+/* Menu button */
+.menu-btn{display:none;position:fixed;top:var(--space-md);right:var(--space-md);width:44px;height:44px;background:var(--bg-raised);border:1px solid var(--border-accent);border-radius:var(--radius-sm);color:var(--accent-green);font-size:1.3rem;cursor:pointer;z-index:90;align-items:center;justify-content:center;font-family:var(--mono);line-height:1}
+.menu-btn:hover{background:var(--bg-card)}
+
+/* Nav close button */
+.nav-close{display:none;position:absolute;top:var(--space-md);right:var(--space-md);width:36px;height:36px;background:var(--bg-raised);border:1px solid var(--border-accent);border-radius:var(--radius-sm);color:var(--accent-green);font-size:1.2rem;cursor:pointer;align-items:center;justify-content:center;font-family:var(--mono);line-height:1}
+.nav-close:hover{background:var(--bg-card)}
+
+/* Table wrap */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+
+/* Back to top */
+.back-to-top{position:fixed;bottom:var(--space-lg);right:var(--space-lg);width:44px;height:44px;background:var(--bg-raised);border:1px solid var(--border-accent);border-radius:50%;color:var(--accent-green);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--transition-fast);z-index:80;text-decoration:none;font-family:var(--mono)}
+.back-to-top:hover{background:var(--bg-card);color:var(--accent-cyan)}
+.back-to-top.visible{opacity:1;pointer-events:auto}
+
 /* Responsive */
+@media(min-width:901px){
+  .menu-btn,.nav-close,.nav-overlay{display:none!important}
+}
+
 @media(max-width:900px){
   .page{flex-direction:column}
-  .sidebar{width:100%;height:auto;position:relative;padding:var(--space-md);border-right:none;border-bottom:1px solid var(--border-subtle)}
-  .sidebar-nav{flex-direction:row;flex-wrap:wrap;gap:var(--space-xs)}
-  .sidebar-nav a{font-size:0.75rem;padding:var(--space-xs) var(--space-sm)}
-  .content{padding:var(--space-md);max-width:none}
+  .sidebar{position:fixed;top:0;left:0;width:280px;height:100vh;z-index:100;transform:translateX(-100%);transition:transform var(--transition-med);overflow-y:auto;padding:var(--space-xl) var(--space-lg);border-right:1px solid var(--border-subtle);background:var(--bg-void)}
+  .nav-toggle:checked ~ .page .sidebar{transform:translateX(0)}
+  .nav-close{display:flex}
+  .menu-btn{display:flex}
+  .sidebar-nav{flex-direction:column;gap:var(--space-xs)}
+  .sidebar-nav a{font-size:0.8rem;padding:var(--space-xs) var(--space-sm)}
+  .content{padding:var(--space-md);max-width:100%}
 }
+
+@media(max-width:480px){
+  .sidebar{width:260px}
+  .content{padding:var(--space-sm)}
+  h1{font-size:clamp(1.3rem,6vw,1.6rem)}
+  h2{font-size:1.1rem}
+  h3{font-size:0.95rem}
+  .terminal-body{font-size:0.72rem}
+  table{font-size:0.7rem}
+}
+
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 
+<input type="checkbox" id="nav-toggle" class="nav-toggle">
+<label for="nav-toggle" class="nav-overlay"></label>
+
 <div class="page">
 <nav class="sidebar">
+  <label for="nav-toggle" class="nav-close" aria-label="Close menu">×</label>
   <a class="back-link" href="../">← Back to omo-kit</a>
   <div class="sidebar-title">Guide</div>
   <ul class="sidebar-nav">
@@ -126,6 +171,8 @@ td code{font-size:0.78rem}
 
 <main class="content">
 
+<label for="nav-toggle" class="menu-btn" aria-label="Menu">☰</label>
+
 <h1>Guide — Understanding oh-my-openagent & omo-kit</h1>
 
 <p>This guide explains what oh-my-openagent does, why you need it, and how <strong>omo-kit</strong> generates the configuration for you. No hand-editing JSON. No guessing model IDs. No wondering why your agent picked the wrong model.</p>
@@ -134,7 +181,7 @@ td code{font-size:0.78rem}
 <h2 id="what-is-omo">What is oh-my-openagent?</h2>
 
 <h3>The platform</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Tool</th><th>What it is</th></tr></thead>
 <tbody>
 <tr><td><strong>OpenCode</strong></td><td>The base terminal AI coding agent. A native terminal UI for AI-powered coding with 75+ LLM providers.</td></tr>
@@ -142,7 +189,7 @@ td code{font-size:0.78rem}
 <tr><td><strong>OpenCode Go</strong></td><td>A $10/month subscription providing reliable access to open coding models: DeepSeek V4, GLM-5.1, MiniMax M2.7, Qwen3.6. Uses <code>opencode-go/</code> prefix.</td></tr>
 <tr><td><strong>OpenCode Zen</strong></td><td>Pay-as-you-go model provider. Curated, benchmarked models for coding agents. Uses <code>opencode/</code> (paid) and <code>zen/</code> (free) prefixes.</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p><strong>In short:</strong> OpenCode is the car. oMo is the racing team. OpenCode Go and Zen are different fuel stations.</p>
 
@@ -153,14 +200,14 @@ td code{font-size:0.78rem}
 
 <p>With oMo, each agent role gets a model matched to its complexity:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Role</th><th>Task</th><th>Model needed</th><th>Typical cost/M output</th></tr></thead>
 <tbody>
 <tr><td><strong>Sisyphus</strong></td><td>Orchestrate complex tasks</td><td>Deep reasoning</td><td>$0.87</td></tr>
 <tr><td><strong>Explore</strong></td><td>Search codebase</td><td>Fast, cheap</td><td>$1.20</td></tr>
 <tr><td><strong>Quick tasks</strong></td><td>Fix typos, small edits</td><td>Cheapest possible</td><td>Free</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Without this routing, every code search costs the same as an architecture decision. <strong>omo-kit generates the routing table so you don't have to.</strong></p>
 
@@ -169,7 +216,7 @@ td code{font-size:0.78rem}
 
 <p>Running <code>bunx omo-kit init</code> creates four files in your project directory:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>File</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td><code>oh-my-openagent.json</code></td><td><strong>Agent routing table.</strong> Maps 10 agent roles and 8 task categories to specific models with thinking budgets and fallback chains.</td></tr>
@@ -177,7 +224,7 @@ td code{font-size:0.78rem}
 <tr><td><code>tui.json</code></td><td><strong>Theme configuration.</strong> Terminal UI color scheme. Can be validated and regenerated via <code>omo-kit theme</code>.</td></tr>
 <tr><td><code>AGENTS.md</code></td><td><strong>Project conventions.</strong> Stack-specific instructions for AI coding agents: tooling, commands, commit style. Generated from stack templates.</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="terminal-block">
 <div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">~/my-project</span></div>
@@ -202,14 +249,14 @@ td code{font-size:0.78rem}
 
 <p>Strips irrelevant capabilities for your tech stack. Backend languages don't need frontend testing tools:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Stack type</th><th>Stacks</th><th>Disabled skills</th><th>Disabled MCPs</th></tr></thead>
 <tbody>
 <tr><td>Web / Frontend</td><td>astro, svelte, node</td><td><em>none</em></td><td><em>none</em></td></tr>
 <tr><td>Backend / Systems</td><td>go, rust, python</td><td><code>frontend-ui-ux</code>, <code>frontend-design</code>, <code>design-taste-frontend</code></td><td><code>browser</code>, <code>playwright</code></td></tr>
 <tr><td>Generic</td><td>generic</td><td><em>none</em></td><td><em>none</em></td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Generated from your chosen stack's profile during <code>init</code>. Override in the generated file if needed.</p>
 
@@ -218,7 +265,7 @@ td code{font-size:0.78rem}
 
 <p>oMo defines <strong>10 specialized agents</strong>. Each gets a model matched to its task:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Agent</th><th>Purpose</th><th>Model tier</th><th>Thinking</th></tr></thead>
 <tbody>
 <tr><td><strong>sisyphus</strong></td><td>Main orchestrator. Plans, delegates, verifies.</td><td>Premium</td><td>—</td></tr>
@@ -232,7 +279,7 @@ td code{font-size:0.78rem}
 <tr><td><strong>sisyphus-junior</strong></td><td>Category task executor. Runs delegated work.</td><td>Medium</td><td>4K</td></tr>
 <tr><td><strong>multimodal-looker</strong></td><td>Image/PDF analysis.</td><td>Medium</td><td>—</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="note"><strong>Note:</strong> Premium agents (sisyphus, oracle, prometheus, atlas, metis) omit the <code>thinking</code> field entirely. This is intentional — DeepSeek V4 Pro has a known bug where <code>reasoning_content</code> isn't preserved across multi-turn conversations. Use <code>Ctrl+T</code> in the TUI for manual reasoning on single-turn queries.</div>
 
@@ -256,7 +303,7 @@ td code{font-size:0.78rem}
 
 <p>When agents delegate work, they pick a <strong>category</strong> — not a model name. The category maps to the right model:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Category</th><th>Use case</th><th>Model tier</th><th>Thinking</th></tr></thead>
 <tbody>
 <tr><td><strong>visual-engineering</strong></td><td>UI/UX, CSS, design, animation</td><td>Premium</td><td>8K</td></tr>
@@ -268,7 +315,7 @@ td code{font-size:0.78rem}
 <tr><td><strong>quick</strong></td><td>Trivial tasks — typos, single-file changes</td><td>Free</td><td>Disabled</td></tr>
 <tr><td><strong>unspecified-low</strong></td><td>Low-effort undefined tasks</td><td>Free</td><td>Disabled</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <!-- Fallback chains -->
 <h3 id="fallback-chains">Fallback chains</h3>
@@ -293,7 +340,7 @@ td code{font-size:0.78rem}
 
 <p>Not every task benefits from chain-of-thought reasoning. omo-kit applies a tiered thinking policy:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Agent / Category</th><th>Thinking</th><th>Budget</th><th>Why</th></tr></thead>
 <tbody>
 <tr><td>momus</td><td>Enabled</td><td>16,000</td><td>Plan review needs deep reasoning</td></tr>
@@ -304,21 +351,21 @@ td code{font-size:0.78rem}
 <tr><td>explore, librarian</td><td>Disabled</td><td>0</td><td>Code search gains nothing from thinking</td></tr>
 <tr><td>quick, unspecified-low, writing</td><td>Disabled</td><td>0</td><td>Trivial tasks — thinking is wasted tokens</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <!-- ═══ BUDGET TIERS ═══ -->
 <h2 id="budget-tiers">Budget tiers</h2>
 
 <p>During <code>init</code>, you pick one of three budget strategies. This affects which model pool each agent tier pulls from:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Tier</th><th>Premium agents</th><th>Medium agents</th><th>Free agents</th><th>Monthly cost</th></tr></thead>
 <tbody>
 <tr><td><strong>generous</strong></td><td>DeepSeek V4 Pro</td><td>GLM-5.1, MiniMax M2.7</td><td>MiniMax M2.5-free</td><td>$10–30</td></tr>
 <tr><td><strong>frugal</strong></td><td>GLM-5.1</td><td>MiniMax M2.7</td><td>MiniMax M2.5-free</td><td>$5–10</td></tr>
 <tr><td><strong>free-only</strong></td><td>MiniMax M2.5-free</td><td>MiniMax M2.5-free</td><td>MiniMax M2.5-free</td><td>$0</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p><strong>Frugal</strong> is the recommended starting point — 90% of the quality at 30% of the cost.</p>
 
@@ -327,7 +374,7 @@ td code{font-size:0.78rem}
 
 <p>omo-kit provides 7 tech stack templates. Each one changes what gets generated:</p>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Stack</th><th>Type</th><th>Disabled skills</th><th>Disabled MCPs</th><th>Agent overrides</th></tr></thead>
 <tbody>
 <tr><td><strong>astro</strong></td><td>Web SSR/static</td><td>—</td><td>—</td><td>—</td></tr>
@@ -338,7 +385,7 @@ td code{font-size:0.78rem}
 <tr><td><strong>rust</strong></td><td>Backend systems</td><td>frontend skills</td><td>browser, playwright</td><td>oracle 16K thinking</td></tr>
 <tr><td><strong>svelte</strong></td><td>Frontend</td><td>—</td><td>—</td><td>—</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Each stack also generates a tailored <strong>AGENTS.md</strong> with stack-specific tooling, commands, conventions, and commit style.</p>
 
@@ -428,7 +475,7 @@ td code{font-size:0.78rem}
 <!-- ═══ TROUBLESHOOTING ═══ -->
 <h2 id="troubleshooting">Troubleshooting</h2>
 
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>Problem</th><th>Likely cause</th><th>Fix</th></tr></thead>
 <tbody>
 <tr><td>"Model not found"</td><td>Wrong provider prefix or model ID</td><td>Check <a href="https://opencode.ai/docs/providers">provider list</a>. Use exact model ID.</td></tr>
@@ -437,12 +484,54 @@ td code{font-size:0.78rem}
 <tr><td>Qwen models not appearing</td><td>Upstream Alibaba issue</td><td>Add a <code>"status": "beta"</code> override in <code>opencode.json</code> provider section</td></tr>
 <tr><td>DeepSeek thinking error</td><td>Known bug: <code>reasoning_content</code> dropped across turns</td><td>Config already omits thinking on premium agents. Use <code>Ctrl+T</code> for manual single-turn.</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="warn"><strong>Known bug:</strong> DeepSeek V4 Pro's thinking mode has an active issue where reasoning content isn't preserved across multi-turn conversations. Three PRs were closed without merge. omo-kit intentionally omits the <code>thinking</code> field from DeepSeek-backed agents. Use <code>Ctrl+T</code> in the OpenCode TUI to toggle reasoning for single-turn critical queries.</div>
 
 </main>
 </div>
+
+<a href="#" class="back-to-top" aria-label="Back to top">↑</a>
+
+<script>
+(function(){
+  // Scroll-spy: highlight active sidebar link
+  var sections = document.querySelectorAll('h2[id]');
+  var navLinks = document.querySelectorAll('.sidebar-nav a');
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  }, {rootMargin: '-10% 0px -70% 0px'});
+  sections.forEach(function(s){ observer.observe(s); });
+
+  // Auto-close mobile menu on nav link click
+  var toggle = document.getElementById('nav-toggle');
+  navLinks.forEach(function(link){
+    link.addEventListener('click', function(){ toggle.checked = false; });
+  });
+
+  // Back-to-top button
+  var btn = document.querySelector('.back-to-top');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 300){ btn.classList.add('visible'); }
+    else { btn.classList.remove('visible'); }
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+})();
+</script>
 
 </body>
 </html>
