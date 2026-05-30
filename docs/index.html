@@ -247,6 +247,14 @@ section {
   color: var(--text-primary);
 }
 
+.section-sub {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: calc(var(--space-xl) * -1);
+  margin-bottom: var(--space-xl);
+}
+
 /* ─── INSTALL ─── */
 .install-section {
   border-top: 1px solid var(--border-subtle);
@@ -735,8 +743,10 @@ footer {
       </div>
       <div class="terminal-body">
         <div><span class="prompt">$ </span><span class="command">bun install -g omo-kit</span></div>
-        <div><span class="comment"># or run without installing:</span></div>
-        <div><span class="prompt">$ </span><span class="command">bunx omo-kit init</span></div>
+        <div><span class="comment"># then run the workflow:</span></div>
+        <div><span class="prompt">$ </span><span class="command">omo-kit setup</span></div>
+        <div><span class="prompt">$ </span><span class="command">omo-kit init</span></div>
+        <div><span class="prompt">$ </span><span class="command">omo-kit doctor</span></div>
       </div>
     </div>
   </div>
@@ -747,6 +757,7 @@ footer {
   <div class="container">
     <div class="section-label reveal">commands</div>
     <h2 class="section-heading reveal">Four commands. One workflow.</h2>
+    <p class="section-sub reveal">Run these in order — setup, then init, then doctor. Theme when you want to customize.</p>
     <div class="timeline">
 
       <div class="timeline-step reveal">
