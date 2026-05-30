@@ -20,6 +20,10 @@ async function main() {
     case "theme":
       await themeCommand();
       break;
+    case "--version":
+    case "-v":
+      console.log("omo-kit v0.1.0");
+      break;
     case undefined:
     case "--help":
     case "-h":
