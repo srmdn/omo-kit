@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { initCommand } from "./commands/init";
+import { setupCommand } from "./commands/setup";
 import { doctorCommand } from "./commands/doctor";
 import { themeCommand } from "./commands/theme";
 
@@ -11,8 +12,7 @@ async function main() {
       await initCommand();
       break;
     case "setup":
-      console.log("Not yet implemented. Run: bunx oh-my-openagent install");
-      console.log("Then: bunx omo-kit init");
+      await setupCommand();
       break;
     case "doctor":
       await doctorCommand();
@@ -26,6 +26,7 @@ async function main() {
       console.log(`omo-kit — CLI toolkit for oh-my-openagent
 
 Usage:
+  bunx omo-kit setup      Install oMo plugin (run first)
   bunx omo-kit init       Generate config files interactively
   bunx omo-kit doctor     Validate existing config files
   bunx omo-kit theme      Manage themes (validate, generate)
