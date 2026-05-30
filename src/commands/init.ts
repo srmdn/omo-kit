@@ -620,7 +620,10 @@ Usage:
   bunx omo-kit init [options]
 
 Options:
-  --help, -h     Show this help message
+  --stack <name>      Skip stack selection (e.g. go, rust, astro)
+  --provider <names>  Skip provider selection, comma-separated
+                      (e.g. opencode-go,anthropic)
+  --help, -h          Show this help message
 
 Interactive mode walks you through stack selection, provider choice,
 and budget preferences — no flags needed.
@@ -628,15 +631,72 @@ and budget preferences — no flags needed.
     return;
   }
 
+  const stackIdx = Bun.argv.indexOf("--stack");
+  const flagStack: string | null =
+    stackIdx !== -1 && Bun.argv[stackIdx + 1] ? Bun.argv[stackIdx + 1] : null;
+
+  const providerIdx = Bun.argv.indexOf("--provider");
+  const flagProvidersRaw: string | null =
+    providerIdx !== -1 && Bun.argv[providerIdx + 1]
+      ? Bun.argv[providerIdx + 1]
+      : null;
+
+  const VALID_PROVIDERS = new Set([
+    "opencode-go",
+    "anthropic",
+    "openai",
+    "github-copilot",
+    "gemini",
+    "xai",
+    "deepseek",
+  ]);
+
   const cwd = process.cwd();
 
   console.log("\n  omo-kit init — generate oh-my-openagent config files\n");
 
   try {
     const stacks = await discoverStacks();
-    const stack = await promptStack(stacks);
+
+    let stack: string;
+    if (flagStack) {
+      if (flagStack === "__custom__") {
+        const { input } = await import("@inquirer/prompts");
+        stack = await input({
+          message: "Describe your stack (e.g. PHP/Laravel, C++/CMake):",
+          validate: (v: string) => v.length > 0 || "Stack name is required",
+        });
+      } else if (stacks.has(flagStack)) {
+        stack = flagStack;
+      } else {
+        console.error(`\n  Unknown stack: "${flagStack}"`);
+        console.error(
+          `  Available: ${[...stacks.keys()].join(", ")}`,
+        );
+        process.exit(1);
+      }
+    } else {
+      stack = await promptStack(stacks);
+    }
+
     const profile = stacks.get(stack) ?? stacks.get("generic");
-    const providers = await promptProviders();
+
+    let providers: Provider[];
+    if (flagProvidersRaw) {
+      const raw = flagProvidersRaw.split(",").map((p) => p.trim());
+      for (const p of raw) {
+        if (!VALID_PROVIDERS.has(p)) {
+          console.error(`\n  Unknown provider: "${p}"`);
+          console.error(
+            `  Available: ${[...VALID_PROVIDERS].join(", ")}`,
+          );
+          process.exit(1);
+        }
+      }
+      providers = raw as Provider[];
+    } else {
+      providers = await promptProviders();
+    }
     const orchestratorModel = await promptOrchestrator(providers);
     const budget = await promptBudget();
 
